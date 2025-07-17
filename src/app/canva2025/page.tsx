@@ -12,7 +12,7 @@ const tabData = [
         content: {
             headline: 'Your All-in-One Creative Canvas',
             description: 'Visual Suite 2.0 is a beacon of creativity, allowing you to craft comprehensive lesson plans and engaging student activities seamlessly within a single design. It transforms abstract concepts into colorful, interactive experiences.',
-            highlight: 'With Visual Suite 2.0, lesson preparation becomes an inspiring journey, helping you captivate students&apos; imaginations and foster a dynamic learning environment.',
+            highlight: 'With Visual Suite 2.0, lesson preparation becomes an inspiring journey, helping you captivate students&apos; imaginations and foster a dynamic learning environment.', // Corrected
             highlightColor: 'text-purple-700',
             image: 'https://placehold.co/600x400/8E44AD/FFFFFF?text=Visual+Suite+2.0',
             alt: 'Illustration of a digital canvas with educational elements'
@@ -35,6 +35,7 @@ const tabData = [
         title: 'AI Tools',
         content: {
             headline: 'Your Creative Teaching Assistant',
+            // Corrected
             description: 'Canva&apos;s AI tools act as an artist&apos;s brush, helping you create tailored visuals and lesson plans with remarkable speed and ease. It&apos;s like having a skilled assistant ready to generate captivating graphics at the click of a button.',
             highlight: 'This technology streamlines the creative process, allowing you to focus on what truly matters: inspiring students and igniting their passion for learning.',
             highlightColor: 'text-green-700',
@@ -42,7 +43,7 @@ const tabData = [
             alt: 'Illustration of AI generating educational visuals'
         }
     },
-    // ... rest of tabData ...
+    // Please ensure the rest of your data follows the same correction rule.
 ];
 
 // Header Component
@@ -64,47 +65,47 @@ const YouTubeEmbed = () => (
                 title="YouTube video player"
                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                 allowFullScreen
-            ></iframe>
+            ></iframe>
         </div>
     </div>
 );
 
-// Tab Content Component - Revised for performance
+// Tab Content Component
 const TabContent = ({ id, content, isActive }) => (
     <div role="tabpanel" id={`tabpanel-${id}`} aria-labelledby={`tab-${id}`} hidden={!isActive} className="motion-safe:animate-in motion-safe:fade-in motion-safe:slide-in-from-top-4">
-        <div className="grid md:grid-cols-2 gap-8 items-center">
-            <div className="prose max-w-none">
-                <h3 className="text-2xl font-semibold text-gray-900">{content.headline}</h3>
-                <p className="text-gray-600">{content.description}</p>
-                <p className={`mt-4 font-medium ${content.highlightColor}`}>{content.highlight}</p>
-            </div>
-            <Image 
-                src={content.image} 
-                alt={content.alt} 
-                width={600}
-                height={400}
-                priority={isActive} // Prioritize loading the image for the active tab
-                className="rounded-lg shadow-md w-full h-auto" 
-            />
-        </div>
-    </div>
+        <div className="grid md:grid-cols-2 gap-8 items-center">
+            <div className="prose max-w-none">
+                <h3 className="text-2xl font-semibold text-gray-900">{content.headline}</h3>
+                <p className="text-gray-600">{content.description}</p>
+                <p className={`mt-4 font-medium ${content.highlightColor}`}>{content.highlight}</p>
+            </div>
+            <Image 
+                src={content.image} 
+                alt={content.alt} 
+                width={600}
+                height={400}
+                priority={isActive}
+                className="rounded-lg shadow-md w-full h-auto" 
+            />
+        </div>
+    </div>
 );
 
-// Tabs Component - Revised for accessibility
+// Tabs Component
 const Tabs = () => {
     const [activeTab, setActiveTab] = useState('suite');
 
     return (
         <div className="bg-white rounded-2xl shadow-xl p-6 md:p-8">
             <div className="border-b border-gray-200 mb-6">
-                <nav role="tablist" className="flex flex-wrap -mb-px" aria-label="Tabs">
+                <nav role="tablist" className="flex flex-wrap -mb-px" aria-label="Tabs">
                     {tabData.map(tab => (
                         <button
                             key={tab.id}
-                            role="tab"
-                            id={`tab-${tab.id}`}
-                            aria-selected={activeTab === tab.id}
-                            aria-controls={`tabpanel-${tab.id}`}
+                            role="tab"
+                            id={`tab-${tab.id}`}
+                            aria-selected={activeTab === tab.id}
+                            aria-controls={`tabpanel-${tab.id}`}
                             onClick={() => setActiveTab(tab.id)}
                             className={`whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm md:text-base mr-4 md:mr-8 transition-colors duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-purple-500 rounded-t-sm ${
                                 activeTab === tab.id
@@ -118,14 +119,14 @@ const Tabs = () => {
                 </nav>
             </div>
             <div>
-                {tabData.map(tab => (
-                    <TabContent 
-                        key={tab.id}
-                        id={tab.id}
-                        content={tab.content} 
-                        isActive={activeTab === tab.id} 
-                    />
-                ))}
+                {tabData.map(tab => (
+                    <TabContent 
+                        key={tab.id}
+                        id={tab.id}
+                        content={tab.content} 
+                        isActive={activeTab === tab.id} 
+                    />
+                ))}
             </div>
         </div>
     );

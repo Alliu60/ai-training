@@ -6,8 +6,6 @@ import { Search, BookOpen, Users, Target, MessageSquare, FileText, Star } from '
 // --- Data Layer (Moved outside the component for performance) ---
 
 const prompts = [
-    // This is the same large array of prompt objects from your original code.
-    // Example:
     {
         id: 1,
         category: 'activities',
@@ -25,9 +23,341 @@ Learning objectives:
 Clear instructions and expectations: [Explain how the activity will be conducted and what students should accomplish]
 Resources: [List required resources]
 Constraints: [Note any potential limitations]
-Specific theme or context: [Include information about the activity's theme or the context in which it will exist]`
+Specific theme or context: [Include information about the activity&apos;s theme or the context in which it will exist]`
     },
-    // ... all 24 prompts from your original code would be here
+    {
+        id: 2,
+        category: 'activities',
+        title: 'Generate a review activity',
+        description: 'Create engaging activities for students to review specified content',
+        template: `I am a [Enter your role]. Based on the following information, develop an engaging activity that will enable students to review the specified content:
+
+Subject: [Enter subject]
+Grade level: [Enter grade level]
+Learning objectives:
+[Enter learning objective]
+[Enter learning objective]
+[Enter learning objective]
+
+Knowledge, skills, and understanding: [Note key facts, concepts, or processes covered in the material]
+Critical thinking: [Explain whether the students will be analyzing information, drawing conclusions, evaluating arguments, problem-solving, etc.]
+Content and material: [Specify the specific content area, lesson, or topic you want to focus on]
+Materials: [Paste in textbook chapters or sections, lecture notes, handouts, or other relevant resources]
+Reading level: [State the desired reading level for the review activity]
+Activity type and format: [Describe the desired type of activity, such as quiz, game, simulation, collaborative project, etc.]
+Difficulty and length: [Indicate the difficulty level and length]`
+    },
+    {
+        id: 3,
+        category: 'activities',
+        title: 'Facilitate student introductions',
+        description: 'Create ability-inclusive ideas to help students get to know each other',
+        template: `I am a [Enter your role]. I need three ability-inclusive ideas to help [Enter grade level and subject] students get to know each other.`
+    },
+    {
+        id: 4,
+        category: 'activities',
+        title: 'Modify activities',
+        description: 'Adapt existing project activities to better suit student needs and interests',
+        template: `I am a [Enter your role]. Modify the following project activities to better suit the needs and interests of my students:
+
+Project title: [Enter the title of the project]
+Subject: [State the subject of the project]
+Grade level: [Enter grade level]
+Topic: [Note the specific topic covered by the project]
+Current project description: [Provide a brief description of the project as it currently is]
+Target audience: [Describe the students who will be participating in the project and their particular interests]
+
+Desired Modifications:
+Areas for modification: [Specify which aspects of the project you want to modify, such as the difficulty level, scope, assessment methods, or specific activities]
+Reasons for modification: [Explain why you want to make these modifications, such as making the project more engaging, accessible, or aligned with student interests]
+Desired outcomes: [Describe what you hope to achieve by modifying the project, such as promoting deeper learning, fostering collaboration, or addressing individual needs]
+Additional information: [Include any other relevant details, such as available resources, time constraints, or specific learning objectives you want to address]`
+    },
+    {
+        id: 5,
+        category: 'lesson-plans',
+        title: 'Create a lesson plan from scratch',
+        description: 'Write comprehensive lesson plans to achieve desired learning outcomes',
+        template: `I am a [Enter your role]. Based on the following information, write a lesson plan that will help my students achieve the desired learning outcomes:
+
+Subject: [Enter subject]
+Grade level: [Enter grade level]
+Learning objectives:
+- [Enter learning objective]
+- [Enter learning objective]
+- [Enter learning objective]
+
+Time limit: [Enter duration of lesson]
+Prior knowledge: [Enter information about what students already know about the topic]
+Materials: [List any required materials]
+Time allotment: [Enter required time for the lesson]`
+    },
+    {
+        id: 6,
+        category: 'lesson-plans',
+        title: 'Enhance your existing lesson plan',
+        description: 'Improve and expand upon existing lesson plans',
+        template: `I am a [Enter your role]. Write a lesson plan that will help my [Enter grade level and subject] students [Enter learning objectives]. Our class is [number] minutes long. The lesson plan should include a section for [Enter desired lesson plan structure].`
+    },
+    {
+        id: 7,
+        category: 'lesson-plans',
+        title: 'Generate a slide show presentation',
+        description: 'Create text content for educational slide presentations',
+        template: `I am a [Enter your role]. Create the text for a slide deck about [Enter subject] for a [Enter grade level and subject] class, including speaker notes. There should be five slides of text that are formatted with a header and then a set of bullets for each slide. The first slide should include text on the lesson objectives. The last slide should include text for a formative assessment and a student activity.`
+    },
+    {
+        id: 8,
+        category: 'differentiation',
+        title: 'Add differentiation for fast finishers',
+        description: 'Create extensions for students who complete activities quickly',
+        template: `I am a [Enter your role]. Based on the following information, suggest ways to add differentiation to the activity for students who finish quickly:
+
+Activity: [Enter activity name]
+Grade level: [Enter grade level]
+Learning objectives:
+- [Enter learning objective]
+- [Enter learning objective]
+- [Enter learning objective]
+
+Clear instructions and expectations: [Explain how the activity will be conducted and what students should accomplish]
+Resources: [List required resources]
+Constraints: [Note any potential limitations]
+Specific theme or context: [Include information about the activity&apos;s theme or the context in which it will exist]`
+    },
+    {
+        id: 9,
+        category: 'differentiation',
+        title: 'Create project tasks for different mastery levels',
+        description: 'Differentiate project tasks based on student mastery and experience',
+        template: `I am a [Enter your role]. Based on the following information, suggest ways to differentiate project tasks for students with different levels of mastery and experience:
+
+Project: [Enter project name]
+Grade level: [Enter grade level]
+Learning objectives:
+- [Enter learning objective]
+- [Enter learning objective]
+- [Enter learning objective]
+
+Clear instructions and expectations: [Explain how the activity will be conducted and what students should accomplish]
+Resources: [List required resources]
+Constraints: [Note any potential limitations]
+Specific theme or context: [Include information about the project&apos;s theme or the context in which it will exist]`
+    },
+    {
+        id: 10,
+        category: 'differentiation',
+        title: 'Check assignments&apos; reading level', // Corrected
+        description: 'Review and simplify assignment text for appropriate reading levels',
+        template: `I am a [Enter your role]. Review this [Enter assignment] and point out areas where the writing can be simplified in order to ensure the reading level is appropriate for my [Enter grade level] students: [Enter assignment]`
+    },
+    {
+        id: 11,
+        category: 'differentiation',
+        title: 'Adjust reading level',
+        description: 'Modify text complexity to make content more accessible',
+        template: `I am a [Enter your role]. Adjust the reading level of the following text to make it more accessible for students at a [Target reading level] level.
+
+Original text: [Paste in the text]
+Subject: [Note the subject of the text]
+Topic: [Specify the specific topic covered in the text]
+Target audience: [Describe the students who will be reading the adjusted text, including their age, grade level, and any relevant learning needs]
+Key points to preserve: [List the essential information and main points that must be retained in the adjusted text]
+Vocabulary: [Include any complex vocabulary or jargon that needs to be simplified or explained]
+Sentence structure: [Reference any desired changes to sentence length or complexity]
+Additional notes: [Add any other helpful information or preferences for the adjusted text, such as tone, format, or specific areas to focus on]`
+    },
+    {
+        id: 12,
+        category: 'differentiation',
+        title: 'Summarize content',
+        description: 'Create clear, concise summaries for absent students',
+        template: `I am a [Enter your role]. Summarize the following content for any students who are not present during the classroom discussion. Ensure the summary is clear, concise, and easy to understand:
+
+Subject and topic: [State the subject and specific topic covered in the lesson]
+Reading or excerpt: [If appropriate, enter reading or excerpt name, or paste in the content]
+Reading level: [Note the desired reading level]
+Learning objectives:
+[Enter learning objective]
+[Enter learning objective]
+[Enter learning objective]
+
+Key points and details: [Summarize the main points and arguments]
+Terminology: [Define or explain any important terms or concepts used in the lesson]
+Format: [Specify the desired format, such as bullet points, a timeline, a comparison chart, etc.]
+Specific theme or context: [Include information about the content&apos;s theme or the context in which it will exist]
+Level of detail: [Adjust the level of detail to be appropriate for your objective]`
+    },
+    {
+        id: 13,
+        category: 'creative-enhancements',
+        title: 'Generate engaging examples',
+        description: 'Create relatable examples using famous sports players or other contexts',
+        template: `I am a [Enter your role]. Based on the following details, generate five examples using famous sports players.
+
+Subject: [Enter subject]
+Grade level: [Enter grade level]
+Learning objectives:
+- [Enter learning objective]
+- [Enter learning objective]
+- [Enter learning objective]`
+    },
+    {
+        id: 14,
+        category: 'creative-enhancements',
+        title: 'Develop appropriate examples',
+        description: 'Enhance assignments with inclusive, classroom-appropriate examples',
+        template: `I am an [Enter your role]. Here is a [Enter subject] assignment for my [Enter grade level and subject] students. Enhance it to include inclusive, classroom appropriate examples, such as by asking students to create a review of the poem for a teen literary magazine:
+
+[Enter assignment]`
+    },
+    {
+        id: 15,
+        category: 'creative-enhancements',
+        title: 'Create engaging in-class writing exercises',
+        description: 'Design time-limited writing assignments for classroom use',
+        template: `I am a [Enter your role]. Create an in-class writing assignment for my students about [Enter writing topic]. The in-class writing assignment should include [Enter specific goals] about [Enter topic]. Students must complete their work in [number] minutes.`
+    },
+    {
+        id: 16,
+        category: 'creative-enhancements',
+        title: 'Apply instructional strategies',
+        description: 'Create activities using specific instructional strategies',
+        template: `I am a [Enter your role]. Based on the following details, create an activity for [Enter grade] students studying [Enter class topic] that uses [Enter instructional strategy].
+
+Materials: [Paste in textbook chapters or sections, lecture notes, handouts, or other relevant resources]
+Reading level: [State the desired reading level for the review activity]
+Learning objectives:
+- [Enter learning objective]
+- [Enter learning objective]
+- [Enter learning objective]
+
+Format: [Specify the desired format, like bullet points, a timeline, a comparison chart, etc.]`
+    },
+    {
+        id: 17,
+        category: 'creative-enhancements',
+        title: 'Add graphics to your worksheets',
+        description: 'Create image descriptions for educational presentations',
+        template: `I am a [Enter your role]. Based on the following details, create [number] images for a presentation about [Enter topic]:
+
+Subject: [Enter subject]
+Grade level: [Enter grade level]
+Style: [Enter illustration style]
+Materials: [Paste in textbook chapters or sections, lecture notes, handouts, or other relevant resources]
+Learning objectives:
+- [Enter learning objective]
+- [Enter learning objective]
+- [Enter learning objective]`
+    },
+    {
+        id: 18,
+        category: 'creative-enhancements',
+        title: 'Create a story starter prompt',
+        description: 'Generate creative writing prompts aligned with learning objectives',
+        template: `I am a [Enter your role]. Based on the following information, create a story starter for students to use that aligns with the learning objective:
+
+Subject: [Enter subject]
+Grade level: [Enter grade level]
+Learning objective: [Specify the learning objective that the story starter should align with]
+Specific theme, setting, or context: [Provide details about the story's setting, time period, and genre]
+Plot elements: [Provide some hints or suggestions about the plot of the story, but leave room for creativity]
+Tone and style: [Indicate the desired tone and style of the story, such as serious, humorous, suspenseful, etc.]`
+    },
+    {
+        id: 19,
+        category: 'assessments',
+        title: 'Create an assessment',
+        description: 'Design comprehensive assessments covering learning objectives',
+        template: `I am a [Enter your role]. Based on the following information, create a comprehensive and engaging assessment for my students. The assessment should:
+- Cover all of the stated learning objectives
+- Be aligned with the chosen assessment type and format
+- Clearly evaluate the desired skills and knowledge
+- Provide clear instructions and expectations for students
+- Include answer keys or a rubric for grading
+
+Subject: [Enter subject]
+Grade level: [Enter grade level]
+Learning objectives:
+- [Enter learning objective]
+- [Enter learning objective]
+- [Enter learning objective]
+
+Assessment type: [Note whether the assessment should be formative, summative, individual, group, written, oral, performance-based, etc.]
+Desired skills assessed: [List specific skills or knowledge, as well as any critical thinking or higher-order skills to be evaluated]
+Time allotment: [Enter estimated time for the assessment; include desired number of questions, if applicable]
+Other criteria: [Include any existing rubrics or assessment criteria the AI tool should reference]`
+    },
+    {
+        id: 20,
+        category: 'assessments',
+        title: 'Generate exit tickets',
+        description: 'Create quick assessment activities for the end of class',
+        template: `I am a [Enter your role]. Based on the following details, create [number] exit ticket activities and questions for the end of my class:
+
+Subject: [Enter subject]
+Grade level: [Enter grade level]
+Materials: [Paste in a summary of topics covered in the class, lecture notes, handouts, or other relevant resources]
+Learning objectives:
+- [Enter learning objective]
+- [Enter learning objective]
+- [Enter learning objective]
+
+These activities and questions should be concise and assess students' understanding of the lesson material.`
+    },
+    {
+        id: 21,
+        category: 'communication',
+        title: 'Write a message to families about an upcoming event',
+        description: 'Draft engaging emails inviting parents to school events',
+        template: `I am a [Enter your role]. Based on the information provided, draft an engaging and informative email inviting parents to attend the [event name]. Encourage their participation by highlighting the benefits for students, fostering a sense of community, and clearly outlining the event details:
+
+Subject: [Event name] invitation: Join us!
+Grade level: [Enter grade level]
+Event date and time: [Enter date and time]
+Event description: [Provide a brief overview of the event, its purpose, and any highlights]
+Target audience: [Specify if the event is for all guardians, specific grade levels, or particular student groups]
+Desired outcome: [State your goal for parent participation, such as increased engagement, community building, supporting student learning, etc.]
+Tone: [Note the particular tone or message to be conveyed, such as enthusiastic, informative, persuasive, etc.]
+Optional additional information: [Include any special activities planned, whether refreshments will be served, if it's necessary to RSVP or register]`
+    },
+    {
+        id: 22,
+        category: 'communication',
+        title: 'Create an email newsletter',
+        description: 'Design regular newsletters for parent and community engagement',
+        template: `I am a [Enter your role]. Based on the information provided, draft a [Enter newsletter cadence] focused on [Enter newsletter topics]. Include sections for [Enter necessary section headers]. Encourage readers' participation by highlighting the benefits for students, fostering a sense of community, and clearly outlining the [event details or upcoming events]:
+
+Subject: [Enter the subject]
+Grade: [Include grade-level]
+Upcoming events: [Provide a brief overview of any events, their purpose, and any highlights]
+Target audience: [Specify if the event is for all guardians, specific grade levels, or particular student groups]
+Desired outcome: [State your goal for parent participation, such as increased engagement, community building, supporting student learning, etc.]
+Tone: [Note the particular tone or message to be conveyed, such as enthusiastic, informative, persuasive, etc.]
+Length: [Specify how many pages the newsletter should be]
+Optional additional Information: [Include any special dates, additional notices, or important information]`
+    },
+    {
+        id: 23,
+        category: 'communication',
+        title: 'Create a classroom reminder prompt',
+        description: 'Draft helpful reminders for students about materials and assignments',
+        template: `I am a [Enter your role]. Based on the information provided, draft a helpful note to students reminding them to bring a [Enter item, such as graphing calculator, current news article, or sketchbook, etc.] for this week's lesson about [Specify lesson topic]:
+
+Lesson date: [Enter date]
+Materials: [Indicate what students should bring]
+Format: [Specify the desired format, such as a learning management system announcement, a text message, an email, etc.]
+Level of detail: [Adjust the level of detail to be appropriate for your reminder]
+Tone: [Note the tone, such as enthusiastic, persuasive, etc.]`
+    },
+    {
+        id: 24,
+        category: 'communication',
+        title: 'Set classroom expectations',
+        description: 'Compose professional communications about student expectations',
+        template: `I am a [Enter your role] composing a class communication regarding expectations for students over the summer. The message should be about 75 words long and encourage students to [Enter expectations] in preparation for next school year. Write it with a professional, yet friendly and inclusive, tone. The format is an email.`
+    }
 ];
 
 const categories = [
