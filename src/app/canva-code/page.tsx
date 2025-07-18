@@ -194,24 +194,16 @@ const CanvaCodeVideos: React.FC = () => {
                     </div>
                   </div>
 
-                  {/* Thumbnail Placeholder */}
+                  {/* YouTube Video Embed */}
                   <div className="lg:w-80 xl:w-96">
-                    <div 
-                      className="aspect-video bg-gradient-to-br from-purple-400 via-blue-500 to-indigo-600 rounded-xl flex items-center justify-center cursor-pointer hover:scale-105 transition-transform duration-200 shadow-lg"
-                      onClick={() => openVideo(video.url)}
-                      role="button"
-                      tabIndex={0}
-                      onKeyDown={(e) => {
-                        if (e.key === 'Enter' || e.key === ' ') {
-                          openVideo(video.url);
-                        }
-                      }}
-                      aria-label={`Play ${video.title}`}
-                    >
-                      <div className="text-center text-white">
-                        <Play className="h-16 w-16 mx-auto mb-2 drop-shadow-lg" />
-                        <p className="font-semibold text-sm opacity-90">Click to Play</p>
-                      </div>
+                    <div className="aspect-video rounded-xl overflow-hidden shadow-lg hover:shadow-xl transition-shadow duration-200">
+                      <iframe
+                        src={`https://www.youtube.com/embed/${video.url.split('v=')[1]?.split('&')[0]}?rel=0&modestbranding=1`}
+                        title={video.title}
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                        allowFullScreen
+                        className="w-full h-full border-0"
+                      />
                     </div>
                   </div>
                 </div>
