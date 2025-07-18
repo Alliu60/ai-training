@@ -1,11 +1,52 @@
 "use client";
 
 import React, { useState, useMemo } from 'react';
-import { Search, BookOpen, Users, Target, MessageSquare, FileText, Star } from 'lucide-react';
+import { Search, BookOpen, Users, Target, MessageSquare, FileText, Star, LucideProps } from 'lucide-react';
 
-// --- Data Layer (Moved outside the component for performance) ---
 
-const prompts = [
+// --- TYPE DEFINITIONS ---
+
+// The shape of a single prompt object
+interface Prompt {
+  id: number;
+  category: string;
+  title: string;
+  description: string;
+  template: string;
+}
+
+// The shape of a single category object
+interface Category {
+  id: string;
+  name: string;
+  icon: React.ComponentType<LucideProps>; // Type for Lucide icons
+  count: number;
+}
+
+// Props for the LibraryHeader component
+interface LibraryHeaderProps {
+  searchTerm: string;
+  setSearchTerm: (term: string) => void;
+}
+
+// Props for the CategorySidebar component
+interface CategorySidebarProps {
+  selectedCategory: string;
+  setSelectedCategory: (category: string) => void;
+}
+
+// Props for the PromptCard component
+interface PromptCardProps {
+  prompt: Prompt;
+  isExpanded: boolean;
+  onToggle: (id: number) => void;
+  onCopy: (text: string) => void;
+}
+
+
+// --- DATA LAYER ---
+
+const prompts: Prompt[] = [
     {
         id: 1,
         category: 'activities',
@@ -23,7 +64,7 @@ Learning objectives:
 Clear instructions and expectations: [Explain how the activity will be conducted and what students should accomplish]
 Resources: [List required resources]
 Constraints: [Note any potential limitations]
-Specific theme or context: [Include information about the activity&apos;s theme or the context in which it will exist]`
+Specific theme or context: [Include information about the activity's theme or the context in which it will exist]`
     },
     {
         id: 2,
@@ -124,7 +165,7 @@ Learning objectives:
 Clear instructions and expectations: [Explain how the activity will be conducted and what students should accomplish]
 Resources: [List required resources]
 Constraints: [Note any potential limitations]
-Specific theme or context: [Include information about the activity&apos;s theme or the context in which it will exist]`
+Specific theme or context: [Include information about the activity's theme or the context in which it will exist]`
     },
     {
         id: 9,
@@ -143,12 +184,12 @@ Learning objectives:
 Clear instructions and expectations: [Explain how the activity will be conducted and what students should accomplish]
 Resources: [List required resources]
 Constraints: [Note any potential limitations]
-Specific theme or context: [Include information about the project&apos;s theme or the context in which it will exist]`
+Specific theme or context: [Include information about the project's theme or the context in which it will exist]`
     },
     {
         id: 10,
         category: 'differentiation',
-        title: 'Check assignments&apos; reading level', // Corrected
+        title: "Check assignments' reading level",
         description: 'Review and simplify assignment text for appropriate reading levels',
         template: `I am a [Enter your role]. Review this [Enter assignment] and point out areas where the writing can be simplified in order to ensure the reading level is appropriate for my [Enter grade level] students: [Enter assignment]`
     },
@@ -186,7 +227,7 @@ Learning objectives:
 Key points and details: [Summarize the main points and arguments]
 Terminology: [Define or explain any important terms or concepts used in the lesson]
 Format: [Specify the desired format, such as bullet points, a timeline, a comparison chart, etc.]
-Specific theme or context: [Include information about the content&apos;s theme or the context in which it will exist]
+Specific theme or context: [Include information about the content's theme or the context in which it will exist]
 Level of detail: [Adjust the level of detail to be appropriate for your objective]`
     },
     {
@@ -360,7 +401,7 @@ Tone: [Note the tone, such as enthusiastic, persuasive, etc.]`
     }
 ];
 
-const categories = [
+const categoriesData = [
     { id: 'all', name: 'All Prompts', icon: BookOpen },
     { id: 'activities', name: 'Activities', icon: Users },
     { id: 'lesson-plans', name: 'Lesson Plans', icon: FileText },
@@ -368,15 +409,17 @@ const categories = [
     { id: 'creative-enhancements', name: 'Creative Enhancements', icon: Star },
     { id: 'assessments', name: 'Assessments', icon: FileText },
     { id: 'communication', name: 'Communication', icon: MessageSquare }
-].map(category => ({
+];
+
+const categories: Category[] = categoriesData.map(category => ({
     ...category,
     count: category.id === 'all' ? prompts.length : prompts.filter(p => p.category === category.id).length
 }));
 
 
-// --- UI Components (Broken down for clarity and maintainability) ---
+// --- UI COMPONENTS ---
 
-const LibraryHeader = ({ searchTerm, setSearchTerm }) => (
+const LibraryHeader = ({ searchTerm, setSearchTerm }: LibraryHeaderProps) => (
     <div className="bg-white shadow-sm border-b">
         <div className="max-w-7xl mx-auto px-4 py-6">
             <div className="flex items-center space-x-3 mb-4">
@@ -395,7 +438,7 @@ const LibraryHeader = ({ searchTerm, setSearchTerm }) => (
             </div>
 
             <div className="relative">
-                <label htmlFor="search-prompts" className="sr-only">Search prompts</label> {/* Accessibility fix */}
+                <label htmlFor="search-prompts" className="sr-only">Search prompts</label>
                 <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
                 <input
                     id="search-prompts"
@@ -410,7 +453,7 @@ const LibraryHeader = ({ searchTerm, setSearchTerm }) => (
     </div>
 );
 
-const CategorySidebar = ({ selectedCategory, setSelectedCategory }) => (
+const CategorySidebar = ({ selectedCategory, setSelectedCategory }: CategorySidebarProps) => (
     <div className="lg:w-64 flex-shrink-0">
         <div className="bg-white rounded-lg shadow-sm border p-4">
             <h3 className="font-semibold text-gray-900 mb-4">Categories</h3>
@@ -443,14 +486,14 @@ const CategorySidebar = ({ selectedCategory, setSelectedCategory }) => (
     </div>
 );
 
-const PromptCard = ({ prompt, isExpanded, onToggle, onCopy }) => {
+const PromptCard = ({ prompt, isExpanded, onToggle, onCopy }: PromptCardProps) => {
     const { id, title, description, category, template } = prompt;
     const [copyText, setCopyText] = useState('Copy Template');
 
     const handleCopy = () => {
         onCopy(template);
         setCopyText('Copied!');
-        setTimeout(() => setCopyText('Copy Template'), 2000); // Reset after 2 seconds
+        setTimeout(() => setCopyText('Copy Template'), 2000);
     };
 
     return (
@@ -465,7 +508,7 @@ const PromptCard = ({ prompt, isExpanded, onToggle, onCopy }) => {
                 <div className="flex space-x-2 mt-4">
                     <button
                         onClick={() => onToggle(id)}
-                        aria-expanded={isExpanded} // Accessibility fix
+                        aria-expanded={isExpanded}
                         aria-controls={`prompt-template-${id}`}
                         className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors text-sm"
                     >
@@ -511,7 +554,7 @@ const LibraryFooter = () => (
 export default function GenAiPromptLibraryPage() {
     const [searchTerm, setSearchTerm] = useState('');
     const [selectedCategory, setSelectedCategory] = useState('all');
-    const [expandedPrompt, setExpandedPrompt] = useState(null);
+    const [expandedPromptId, setExpandedPromptId] = useState<number | null>(null);
 
     const filteredPrompts = useMemo(() => {
         return prompts.filter(prompt => {
@@ -522,7 +565,11 @@ export default function GenAiPromptLibraryPage() {
         });
     }, [searchTerm, selectedCategory]);
 
-    const copyToClipboard = (text) => {
+    const handleTogglePrompt = (id: number) => {
+        setExpandedPromptId(prevId => (prevId === id ? null : id));
+    };
+    
+    const copyToClipboard = (text: string) => {
         navigator.clipboard.writeText(text);
     };
 
@@ -545,8 +592,8 @@ export default function GenAiPromptLibraryPage() {
                                     <PromptCard
                                         key={prompt.id}
                                         prompt={prompt}
-                                        isExpanded={expandedPrompt === prompt.id}
-                                        onToggle={setExpandedPrompt}
+                                        isExpanded={expandedPromptId === prompt.id}
+                                        onToggle={handleTogglePrompt}
                                         onCopy={copyToClipboard}
                                     />
                                 ))
