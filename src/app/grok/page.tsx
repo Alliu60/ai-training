@@ -181,19 +181,7 @@ const GrokAIGuide: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-white text-gray-900 overflow-x-hidden">
-      {/* Back to Home Button */}
-      <div className="fixed top-5 left-5 z-50">
-        <a 
-          href="index.html" 
-          className="inline-flex items-center px-4 py-3 bg-white bg-opacity-95 text-gray-700 no-underline rounded-lg font-medium shadow-lg backdrop-blur-md border border-white border-opacity-20 transition-all duration-300 hover:bg-opacity-100 hover:shadow-xl"
-          aria-label="Return to homepage"
-        >
-          <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
-          </svg>
-          返回首页
-        </a>
-      </div>
+
 
       {/* Header */}
       <header className="bg-gradient-to-br from-gray-900 via-gray-700 to-gray-600 text-white py-20 text-center relative overflow-hidden">
@@ -205,10 +193,10 @@ const GrokAIGuide: React.FC = () => {
             </div>
             <h1 className="text-5xl md:text-7xl font-black tracking-tight">Grok AI</h1>
           </div>
-          <p className="text-xl md:text-3xl opacity-95 max-w-4xl mx-auto mb-6 font-light leading-relaxed">
-            Ultimate Beginner's Guide 2025 - Master AI Like Never Before
+                      <p className="text-xl md:text-3xl opacity-95 max-w-4xl mx-auto mb-6 font-light leading-relaxed">
+            Ultimate Beginner&rsquo;s Guide 2025 - Master AI Like Never Before
           </p>
-          <p className="text-lg md:text-xl opacity-90 mb-12 max-w-3xl mx-auto">
+                        <p className="text-lg md:text-xl opacity-90 mb-12 max-w-3xl mx-auto">
             Comprehensive tutorial covering customization, image generation, data analysis, and advanced features
           </p>
           <div className="flex flex-wrap justify-center gap-6">
@@ -276,7 +264,7 @@ const GrokAIGuide: React.FC = () => {
               <div className="absolute top-0 right-0 w-full h-full opacity-10">
                 <div className="w-96 h-96 bg-white rounded-full animate-spin" style={{ animationDuration: '15s' }}></div>
               </div>
-              <h3 className="text-2xl font-semibold mb-4 relative z-10">🎯 What You'll Learn</h3>
+              <h3 className="text-2xl font-semibold mb-4 relative z-10">🎯 What You&rsquo;ll Learn</h3>
               <p className="relative z-10 text-lg">
                 From basic setup to advanced features - this comprehensive guide covers customization, privacy settings, artistic creation, text improvement, web search, and data analysis
               </p>
@@ -443,15 +431,15 @@ const GrokAIGuide: React.FC = () => {
               <div className="space-y-6">
                 <div className="p-6 bg-gray-50 rounded-2xl">
                   <h4 className="font-semibold text-gray-900 mb-2">Image Generation Prompt</h4>
-                  <p className="text-gray-700">"Create a modern, minimalist logo for a tech startup focused on AI solutions, using blue and silver colors"</p>
+                  <p className="text-gray-700">&ldquo;Create a modern, minimalist logo for a tech startup focused on AI solutions, using blue and silver colors&rdquo;</p>
                 </div>
                 <div className="p-6 bg-gray-50 rounded-2xl">
                   <h4 className="font-semibold text-gray-900 mb-2">Data Analysis Prompt</h4>
-                  <p className="text-gray-700">"Analyze the uploaded sales data and provide insights on quarterly performance trends with recommendations"</p>
+                  <p className="text-gray-700">&ldquo;Analyze the uploaded sales data and provide insights on quarterly performance trends with recommendations&rdquo;</p>
                 </div>
                 <div className="p-6 bg-gray-50 rounded-2xl">
                   <h4 className="font-semibold text-gray-900 mb-2">Content Enhancement Prompt</h4>
-                  <p className="text-gray-700">"Improve this blog post for better readability and SEO optimization while maintaining the original tone"</p>
+                  <p className="text-gray-700">&ldquo;Improve this blog post for better readability and SEO optimization while maintaining the original tone&rdquo;</p>
                 </div>
               </div>
             </div>
