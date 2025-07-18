@@ -1,4 +1,4 @@
-
+// No "use client" needed, this is a Server Component.
 import fs from 'fs';
 import path from 'path';
 import Link from 'next/link';
@@ -10,18 +10,7 @@ interface PageRoute {
   description: string;
 }
 
-// This function is not used, but we'll keep the signature correct
-function getPageMetadata(filePath: string) {
-  try {
-    const content = fs.readFileSync(filePath, 'utf8');
-    // Regex to find title/description can be added here if needed
-    return { title: 'Default Title', description: 'Default Description' };
-  } catch (error) {
-    return { title: 'Default Title', description: 'Default Description' };
-  }
-}
-
-// Correctly typed function to find page routes
+// Corrected function to find page routes
 function findPageRoutes(dir: string): PageRoute[] {
   let routes: PageRoute[] = [];
   try {
@@ -33,17 +22,20 @@ function findPageRoutes(dir: string): PageRoute[] {
         // Recursively find routes in subdirectories
         routes = routes.concat(findPageRoutes(fullPath));
       } else if (entry.name === 'page.tsx') {
-        // Construct the URL path from the file path
-        const routePath = dir.replace('src/app', '').replace(/\\/g, '/') || '/';
-        // Simple title/description generation from folder name
-        const title = path.basename(dir).replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
-        const description = `Explore the ${title} page.`;
+        const routePath = dir.replace(path.join(process.cwd(), 'src/app'), '').replace(/\\/g, '/');
         
-        routes.push({
-          path: routePath,
-          title: title || 'Home',
-          description: description,
-        });
+        // **THE FIX IS HERE:**
+        // Only create a card if it's in a subdirectory (not the root app directory).
+        if (routePath) {
+          const title = path.basename(dir).replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+          const description = `Explore the ${title} page.`;
+          
+          routes.push({
+            path: routePath,
+            title: title,
+            description: description,
+          });
+        }
       }
     }
   } catch (error) {
@@ -87,9 +79,7 @@ export default function HomePage() {
         <Header />
         <main>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {pages
-              .filter(page => page.path !== '/') // Don't show the home page card
-              .map((page) => (
+            {pages.map((page) => (
                 <PageCard key={page.path} page={page} />
             ))}
           </div>
