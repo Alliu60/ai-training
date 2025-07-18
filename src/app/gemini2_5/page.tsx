@@ -5,8 +5,6 @@ import React from 'react';
 const GeminiProLanding = () => {
   return (
     <div className="min-h-screen bg-white text-gray-900 font-sans overflow-x-hidden">
-
-
       {/* Header */}
       <header className="relative bg-gradient-to-br from-blue-500 via-red-500 via-yellow-400 via-green-500 to-gray-400 text-white py-20 text-center overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-45 opacity-70 animate-pulse"></div>
@@ -80,7 +78,7 @@ const GeminiProLanding = () => {
         <div className="container mx-auto px-5">
           <div className="max-w-4xl mx-auto text-center">
             <h2 className="text-5xl font-extrabold mb-4 text-gray-900">
-              30 Gemini 2.5 Pro Hacks & Features
+              30 Gemini 2.5 Pro Hacks &amp; Features
             </h2>
             <p className="text-2xl text-gray-600 mb-12 font-light">
               Master every feature and unlock the full potential of Google&apos;s most advanced AI
@@ -91,7 +89,7 @@ const GeminiProLanding = () => {
                 <div className="absolute top-0 right-0 w-96 h-96 bg-white rounded-full -translate-y-48 translate-x-48 animate-spin-slow"></div>
               </div>
               <div className="relative z-10">
-                <h3 className="text-2xl mb-4">🎯 What You'll Master</h3>
+                <h3 className="text-2xl mb-4">🎯 What You&apos;ll Master</h3>
                 <p className="text-lg">
                   Discover 30 powerful hacks including chain of thought reasoning, advanced coding, Canvas mode, Gems creation, and deep research capabilities
                 </p>
@@ -248,7 +246,7 @@ const GeminiProLanding = () => {
         <div className="container mx-auto px-5">
           <div className="text-center mb-16">
             <h2 className="text-5xl font-extrabold mb-4">
-              Custom Gems & Extensions
+              Custom Gems &amp; Extensions
             </h2>
             <p className="text-2xl opacity-90 font-light">
               Create personalized AI assistants for specific tasks
@@ -293,7 +291,7 @@ const GeminiProLanding = () => {
         <div className="container mx-auto px-5">
           <div className="text-center mb-16">
             <h2 className="text-5xl font-extrabold mb-4 text-gray-900">
-              Pro Tips & Best Practices
+              Pro Tips &amp; Best Practices
             </h2>
             <p className="text-2xl text-gray-600 font-light">
               Master Gemini 2.5 Pro with these expert techniques
