@@ -26,7 +26,6 @@ const activities = [
             Learning objectives:
             <br />
             <span className="rounded bg-indigo-100 px-2 py-1 font-medium text-indigo-800">[Enter learning objective]</span>
-            {/* The line below is an example of what was fixed. */}
             <br />
             Specific theme or context: <span className="rounded bg-indigo-100 px-2 py-1 font-medium text-indigo-800">[Include information about the activity&apos;s theme or the context in which it will exist]</span>
           </div>
@@ -35,10 +34,8 @@ const activities = [
       </>
     )
   },
- // ✅ 请务必检查并修正您本地文件中剩余的数据...
-];
 
-// ... The rest of your components ...
+];
 const Header = () => (
     <header className="text-center text-white mb-12">
       <h1 className="text-4xl md:text-5xl font-bold mb-4">🎯 AI Activities</h1>
@@ -53,7 +50,7 @@ const Header = () => (
     </header>
 );
 
-const ActivityCard = ({ icon, title, description, onClick }) => (
+const ActivityCard = ({ icon, title, description, onClick }: { icon: string, title: string, description: string, onClick: () => void }) => (
     <button
       className="w-full h-full text-left bg-white rounded-3xl overflow-hidden shadow-2xl transition-all duration-300 ease-in-out hover:-translate-y-2 hover:shadow-fuchsia-500/40 cursor-pointer group"
       onClick={onClick}
@@ -69,9 +66,9 @@ const ActivityCard = ({ icon, title, description, onClick }) => (
     </button>
 );
 
-const Modal = ({ isOpen, onClose, title, children }) => {
+const Modal = ({ isOpen, onClose, title, children }: { isOpen: boolean, onClose: () => void, title: string, children: React.ReactNode }) => {
     useEffect(() => {
-      const handleEsc = (event) => {
+      const handleEsc = (event: KeyboardEvent) => {
         if (event.key === 'Escape') onClose();
       };
       if (isOpen) {
@@ -118,9 +115,9 @@ const Footer = () => (
 );
 
 export default function AiActivitiesPage() {
-    const [activeModal, setActiveModal] = useState(null);
+    const [activeModal, setActiveModal] = useState<string | null>(null);
   
-    const openModal = (id) => setActiveModal(id);
+    const openModal = (id: string) => setActiveModal(id);
     const closeModal = () => setActiveModal(null);
   
     const currentActivity = activities.find(act => act.id === activeModal);
