@@ -70,25 +70,21 @@ const YouTubeEmbed = () => (
     </div>
 );
 
+interface TabContentProps {
+  id: string;
+  content: React.ReactNode;
+  isActive: boolean;
+}
+
 // Tab Content Component
-const TabContent = ({ id, content, isActive }) => (
-    <div role="tabpanel" id={`tabpanel-${id}`} aria-labelledby={`tab-${id}`} hidden={!isActive} className="motion-safe:animate-in motion-safe:fade-in motion-safe:slide-in-from-top-4">
-        <div className="grid md:grid-cols-2 gap-8 items-center">
-            <div className="prose max-w-none">
-                <h3 className="text-2xl font-semibold text-gray-900">{content.headline}</h3>
-                <p className="text-gray-600">{content.description}</p>
-                <p className={`mt-4 font-medium ${content.highlightColor}`}>{content.highlight}</p>
-            </div>
-            <Image 
-                src={content.image} 
-                alt={content.alt} 
-                width={600}
-                height={400}
-                priority={isActive}
-                className="rounded-lg shadow-md w-full h-auto" 
-            />
-        </div>
-    </div>
+const TabContent = ({ id, content, isActive }: TabContentProps) => (
+    <div role="tabpanel" id={`tabpanel-${id}`} aria-labelledby={`tab-${id}`} hidden={!isActive} className="motion-safe:animate-in motion-safe:fade-in motion-safe:slide-in-from-top-4">
+        <div className="grid md:grid-cols-2 gap-8 items-center">
+            <div className="prose max-w-none">
+                {content}
+            </div>
+        </div>
+    </div>
 );
 
 // Tabs Component
