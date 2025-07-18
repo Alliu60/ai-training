@@ -5,18 +5,7 @@ import React from 'react';
 const GeminiProLanding = () => {
   return (
     <div className="min-h-screen bg-white text-gray-900 font-sans overflow-x-hidden">
-      {/* Back to Home Button */}
-      <div className="fixed top-5 left-5 z-50">
-        <a 
-          href="index.html" 
-          className="inline-flex items-center px-4 py-2 bg-white/95 text-gray-700 no-underline rounded-lg font-medium shadow-lg backdrop-blur-md border border-white/20 transition-all duration-300 hover:bg-white hover:shadow-xl"
-        >
-          <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
-          </svg>
-          Back to Home
-        </a>
-      </div>
+
 
       {/* Header */}
       <header className="relative bg-gradient-to-br from-blue-500 via-red-500 via-yellow-400 via-green-500 to-gray-400 text-white py-20 text-center overflow-hidden">
@@ -33,7 +22,7 @@ const GeminiProLanding = () => {
           </div>
           
           <p className="text-2xl opacity-95 max-w-4xl mx-auto mb-6 font-light leading-relaxed animate-slide-in-up animation-delay-300">
-            The Biggest & Coolest AI Update Yet - Now Free for Everyone!
+            The Biggest &amp; Coolest AI Update Yet - Now Free for Everyone!
           </p>
           
           <p className="text-xl opacity-90 mb-12 max-w-3xl mx-auto animate-fade-in animation-delay-600">
@@ -60,7 +49,7 @@ const GeminiProLanding = () => {
       <section className="bg-gray-50 py-16 text-center">
         <div className="container mx-auto px-5">
           <h2 className="text-4xl font-bold mb-4 text-gray-900">
-            Google's Best Model - Now Available to All Free Users
+            Google&apos;s Best Model - Now Available to All Free Users
           </h2>
           <p className="text-xl text-gray-600 mb-12">
             Experience the revolutionary AI assistant with smarter problem-solving and enhanced capabilities
@@ -94,7 +83,7 @@ const GeminiProLanding = () => {
               30 Gemini 2.5 Pro Hacks & Features
             </h2>
             <p className="text-2xl text-gray-600 mb-12 font-light">
-              Master every feature and unlock the full potential of Google's most advanced AI
+              Master every feature and unlock the full potential of Google&apos;s most advanced AI
             </p>
             
             <div className="bg-gradient-to-r from-blue-500 to-red-500 text-white p-10 rounded-3xl mb-12 relative overflow-hidden">
@@ -140,7 +129,7 @@ const GeminiProLanding = () => {
               Gemini 2.5 Pro vs ChatGPT
             </div>
             <p className="text-2xl text-gray-900 leading-relaxed italic mb-8">
-              "Gemini 2.5 might be the biggest and coolest Gemini update yet with the larger context window upgraded ways to handle different media and a whole new action plan it might just beat ChatGPT."
+              &ldquo;Gemini 2.5 might be the biggest and coolest Gemini update yet with the larger context window upgraded ways to handle different media and a whole new action plan it might just beat ChatGPT.&rdquo;
             </p>
             <p className="text-lg text-gray-600">
               - 30 Gemini 2.5 Pro Hacks
