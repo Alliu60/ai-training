@@ -4,7 +4,7 @@ import path from 'path';
 import React from 'react'; // React is implicitly available in Next.js App Router
 
 // --- Server-side logic to find pages ---
-function getPageMetadata(filePath) {
+function getPageMetadata(filePath:string) {
   try {
     const content = fs.readFileSync(filePath, 'utf8');
     // Use regex to find an exported title or description. This is an advanced, optional step.
