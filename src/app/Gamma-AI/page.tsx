@@ -1,438 +1,771 @@
-"use client";
+"use client"
 
-import React, { useState, useMemo } from 'react';
+import React, { useState } from 'react';
+import { ChevronDown, ChevronRight, Globe, Zap, Users, BarChart3, Palette, Bot, FileText, Monitor, Share2, Star, AlertTriangle, CheckCircle, ExternalLink } from 'lucide-react';
 
-// Data object containing all the text in both Chinese and English
-const contentData = {
-  header: {
-    title: {
-      zh: "Gamma 应用深度解析",
-      en: "In-Depth Analysis of the Gamma App"
-    },
-    subtitle: {
-      zh: "最新功能、AI 核心与实战指南",
-      en: "Latest Features, AI Core, and Practical Guide"
-    },
-    toggle: {
-      zh: "切换到英文",
-      en: "Switch to Chinese"
-    }
-  },
-  sections: [
-    {
-      id: "summary",
-      title: {
-        zh: "第一部分：执行摘要",
-        en: "Part One: Executive Summary"
-      },
-      subtitle: {
-        zh: "Gamma 在 AI 驱动的沟通新时代中的定位",
-        en: "Gamma's Positioning in the New Era of AI-Driven Communication"
-      },
-      points: [
-        {
-          title: { zh: "核心价值主张", en: "Core Value Proposition" },
-          text: {
-            zh: "Gamma.app 作为一个开创性的 AI 原生平台，其核心价值在于彻底加速演示文稿、文档和网站的创建过程。它将自身定位为用户的 AI 设计伙伴，而非仅仅一个工具。通过自动化繁琐的格式化和设计任务，Gamma 使得用户能够将精力完全集中在思想的提炼和叙事的构建上。",
-            en: "As a pioneering AI-native platform, Gamma.app&rsquo;s core value is to radically accelerate the creation process of presentations, documents, and websites. It positions itself as a user&rsquo;s AI design partner, not just a tool. By automating tedious formatting and design tasks, Gamma allows users to focus entirely on refining their ideas and constructing their narrative."
-          }
-        },
-        {
-          title: { zh: "目标受众与关键用例", en: "Target Audience & Key Use Cases" },
-          text: {
-            zh: "Gamma 的主要用户群体包括顾问、市场营销人员、销售专家、教育工作者以及初创公司创始人。这些专业人士需要在紧迫的时间内制作出精美、面向客户或公众的内容。关键用例包括商业提案、客户报告、市场营销材料和内部培训内容。",
-            en: "Gamma&rsquo;s primary user base includes consultants, marketers, sales professionals, educators, and startup founders. These professionals need to produce polished, client-facing or public content under tight deadlines. Key use cases include business proposals, client reports, marketing materials, and internal training content."
-          }
-        },
-        {
-          title: { zh: "战略市场定位", en: "Strategic Market Positioning" },
-          text: {
-            zh: "在竞争激烈的办公软件市场中，Gamma 占据了一个明确的战略位置。它被视为“速度与便利”的首选，为传统工具（如 PowerPoint）的手动、耗时特性提供了一个强大的替代方案。其市场定位的核心是：为用户提供一种全新的、以网络为中心的内容创建与分享体验。",
-            en: "In the competitive office software market, Gamma occupies a clear strategic position. It is positioned as the top choice for &ldquo;speed and convenience,&rdquo; offering a powerful alternative to the manual, time-consuming nature of traditional tools like PowerPoint. The core of its market positioning is to provide users with a new, web-centric content creation and sharing experience."
-          }
-        }
-      ]
-    },
-    {
-      id: "clarification",
-      title: { zh: "第二部分：关键澄清", en: "Part Two: Key Clarification" },
-      subtitle: { zh: "识别真正的 Gamma.app", en: "Identifying the Real Gamma.app" },
-      points: [
-        {
-          title: { zh: "应对市场混淆", en: "Addressing Market Confusion" },
-          text: {
-            zh: "在深入研究之前，必须澄清本报告所分析的对象是且仅是那个通过官方域名 `gamma.app` 提供服务的 AI 内容创建平台。市场上存在多个使用“Gamma”名称或与其高度相似的应用，它们与真正的 `gamma.app` 平台并无关联，例如苹果应用商店中的“Mega AI”产品和 `gamma.design` 网站。",
-            en: "Before diving deeper, it&rsquo;s crucial to clarify that this report analyzes the AI content creation platform available exclusively through the official domain `gamma.app`. Several apps in the market use the &ldquo;Gamma&rdquo; name or something similar, but they are not affiliated with the genuine `gamma.app` platform, such as the &ldquo;Mega AI&rdquo; product on the Apple App Store and the `gamma.design` website."
-          }
-        }
-      ]
-    },
-    {
-      id: "paradigm",
-      title: { zh: "第三部分：Gamma 范式", en: "Part Three: The Gamma Paradigm" },
-      subtitle: { zh: "解构基于“卡片”的架构与用户界面", en: "Deconstructing the “Card-Based” Architecture & UI" },
-      points: [
-        {
-          title: { zh: "“卡片”：从“幻灯片”到根本性转变", en: "“Cards”: A Fundamental Shift from “Slides”" },
-          text: {
-            zh: "Gamma 的核心架构元素是“卡片”（Card），一个灵活、可扩展的内容容器，其高度会根据内容自动调整。这鼓励用户创建一种更流畅、类似网页的叙事结构，将他们从 PowerPoint 等工具固有的“矩形暴政”中解放出来。",
-            en: "Gamma&rsquo;s core architectural element is the &ldquo;Card,&rdquo; a flexible, expandable content container whose height adjusts automatically based on its content. This encourages users to create a more fluid, web-like narrative structure, liberating them from the &ldquo;tyranny of the rectangle&rdquo; inherent in tools like PowerPoint."
-          }
-        },
-        {
-          title: { zh: "三种创作路径", en: "Three Creation Paths" },
-          text: {
-            zh: "Gamma 提供了三种创作方式：1. **AI 生成**：通过简单的文本提示生成完整初稿。 2. **粘贴文本**：AI 会智能地将粘贴的文本结构化为精美卡片。 3. **导入文件**：AI 会解析上传的 Word、PDF 或 PowerPoint 文件，并将其重新格式化为 Gamma 的原生卡片样式。",
-            en: "Gamma offers three creation methods: 1. **Generate with AI**: Creates a complete first draft from a simple text prompt. 2. **Paste in Text**: The AI intelligently structures pasted text into beautiful cards. 3. **Import File**: The AI parses uploaded Word, PDF, or PowerPoint files and reformats them into Gamma&rsquo;s native card style."
-          }
-        }
-      ]
-    },
-    {
-      id: "ai_engine",
-      title: { zh: "第四部分：AI 引擎", en: "Part Four: The AI Engine" },
-      subtitle: { zh: "深入剖析 Gamma 的多模型智能层", en: "A Deep Dive into Gamma’s Multi-Model Intelligence Layer" },
-      points: [
-        {
-          title: { zh: "作为智能调度者的 AI", en: "AI as an Intelligent Orchestrator" },
-          text: {
-            zh: "Gamma 的 AI 实力并非建立在单一模型之上，而是通过战略性地整合和调度业界最先进的多种 AI 模型来实现，包括来自 Anthropic, OpenAI, Google 等公司的模型。这使 Gamma 成为一个智能的 AI 能力聚合器。",
-            en: "Gamma&rsquo;s AI strength isn&rsquo;t built on a single model but on the strategic integration and orchestration of various state-of-the-art AI models from companies like Anthropic, OpenAI, and Google. This makes Gamma an intelligent aggregator of AI capabilities."
-          }
-        },
-        {
-          title: { zh: "“与 AI 一同编辑”的副驾驶模式", en: "“Edit with AI” Copilot Mode" },
-          text: {
-            zh: "Gamma 提供了一个交互式的、基于聊天的编辑功能。用户可以通过自然语言指令来修改内容，例如输入“让这段话更简洁”或“为我找一张更合适的图片”，极大地提升了修改效率。",
-            en: "Gamma provides an interactive, chat-based editing feature. Users can modify content with natural language commands, such as &ldquo;make this paragraph more concise&rdquo; or &ldquo;find a more suitable image for me,&rdquo; significantly improving editing efficiency."
-          }
-        },
-        {
-          title: { zh: "集成式 AI 图像生成器", en: "Integrated AI Image Generator" },
-          text: {
-            zh: "平台内建了一个强大的 AI 图像生成工具。用户无需离开当前工作流程，只需通过文本提示，即可即时创作出独一无二的、符合需求的图片。",
-            en: "The platform has a powerful built-in AI image generation tool. Users can instantly create unique, requirement-compliant images via text prompts without leaving their current workflow."
-          }
-        }
-      ]
-    },
-    {
-      id: "visuals",
-      title: { zh: "第五部分：视觉与互动大师", en: "Part Five: Visual & Interaction Master" },
-      subtitle: { zh: "设计、多媒体与参与度", en: "Design, Multimedia, and Engagement" },
-      points: [
-        {
-          title: { zh: "一键重塑风格与主题", en: "One-Click Restyling & Themes" },
-          text: {
-            zh: "用户可以在不改变任何内容的情况下，通过一次点击，瞬间切换整个作品的视觉主题。平台提供了丰富的主题库，包括近期新增的17个全新主题。",
-            en: "Users can instantly switch the visual theme of their entire work with a single click without changing any content. The platform offers an extensive library of themes, including 17 new themes added recently."
-          }
-        },
-        {
-          title: { zh: "富媒体与应用嵌入", en: "Rich Media & App Embedding" },
-          text: {
-            zh: "Gamma 极大地扩展了“演示文稿”的边界，支持嵌入来自 YouTube, Loom, TikTok 的视频，以及 Figma, Miro, Airtable, Google Workspace 的互动应用。",
-            en: "Gamma significantly expands the boundaries of a “presentation,” supporting embedded videos from YouTube, Loom, and TikTok, as well as interactive apps from Figma, Miro, Airtable, and Google Workspace."
-          }
-        }
-      ]
-    },
-    {
-      id: "latest_features",
-      title: { zh: "第六部分：前沿动态 (2025年更新)", en: "Part Six: Frontier Dynamics (2025 Update)" },
-      subtitle: { zh: "Gamma 最新功能发布解析", en: "Analysis of Gamma’s Latest Feature Releases" },
-      points: [
-        {
-          title: { zh: "Pro 功能：卡片页眉和页脚", en: "Pro Feature: Card Headers & Footers" },
-          text: {
-            zh: "Pro 用户现在可以为每张卡片统一添加 Logo、自定义文本（如“机密文件”字样）以及卡片编号，这对于制作专业的企业级文档至关重要。",
-            en: "Pro users can now add a uniform logo, custom text (e.g., &ldquo;Confidential&rdquo;), and card numbers to each card, which is crucial for creating professional, enterprise-grade documents."
-          }
-        },
-        {
-          title: { zh: "AI 图像编辑与动画", en: "AI Image Editing & Animation" },
-          text: {
-            zh: "用户现在可以对 AI 生成的图像进行编辑，如更换背景。Pro 用户还可以利用 AI 为静态图片添加动态効果，如脉冲、平移等。",
-            en: "Users can now edit AI-generated images, such as changing the background. Pro users can also use AI to add dynamic effects like pulse and pan to static images."
-          }
-        },
-        {
-          title: { zh: "精细化内容风格调整", en: "Fine-Grained Content Style Adjustment" },
-          text: {
-            zh: "用户在 AI 生成内容时，可以明确指定所需的文本密度，例如选择“极简”风格，从而更好地控制输出结果。",
-            en: "When generating content with AI, users can now specify the desired text density, such as selecting a “minimalist” style, to better control the output."
-          }
-        },
-        {
-          title: { zh: "跨作品复制卡片", en: "Copy Cards Across Decks" },
-          text: {
-            zh: "一项显著提升工作效率的功能。用户现在可以轻松地将一个 Gamma 作品中的一张或多张卡片，完整地复制到另一个作品中。",
-            en: "A feature that significantly improves workflow efficiency. Users can now easily copy one or more cards from one Gamma project to another."
-          }
-        }
-      ]
-    },
-    {
-      id: "collaboration",
-      title: { zh: "第七部分：协作、分发与分析", en: "Part Seven: Collaboration, Distribution & Analytics" },
-      subtitle: { zh: "从创作到影响力衡量", en: "From Creation to Measuring Impact" },
-      points: [
-        {
-          title: { zh: "实时团队协作", en: "Real-Time Team Collaboration" },
-          text: {
-            zh: "Gamma 支持团队成员在同一个项目上进行实时协作，功能包括同步共同编辑、添加评论和使用快速表情回应（主要面向付费计划）。",
-            en: "Gamma supports real-time collaboration for team members on the same project, with features including synchronous co-editing, comments, and quick emoji reactions (primarily for paid plans)."
-          }
-        },
-        {
-          title: { zh: "导出选项及其兼容性", en: "Export Options & Compatibility" },
-          text: {
-            zh: "Gamma 允许导出为 PDF 或 PPTX 文件。然而，大量用户反馈指出，导出的 PPTX 文件经常会遇到格式错乱的问题，因为其“卡片”结构无法完美映射到 PowerPoint 的“幻灯片”结构上。",
-            en: "Gamma allows exporting to PDF or PPTX files. However, significant user feedback indicates that exported PPTX files often suffer from formatting issues because its “card” structure cannot be perfectly mapped to PowerPoint&rsquo;s “slide” structure."
-          }
-        },
-        {
-          title: { zh: "内置分析功能", en: "Built-in Analytics" },
-          text: {
-            zh: "平台提供了内置的分析仪表板，用于追踪观众的参与度，包括总观看次数、每个观看者的互动情况，以及精确到卡片层级的参与度。",
-            en: "The platform provides a built-in analytics dashboard to track audience engagement, including total views, individual viewer interactions, and engagement metrics down to the card level."
-          }
-        }
-      ]
-    }
-  ],
-  featureTable: {
-    title: { zh: "第八部分：功能矩阵", en: "Part Eight: Feature Matrix" },
-    subtitle: { zh: "功能、计划与 UI 位置对照", en: "Features, Plans & UI Location" },
-    headers: [
-      { zh: "功能类别", en: "Category" },
-      { zh: "具体功能", en: "Feature" },
-      { zh: "详细描述", en: "Description" },
-      { zh: "适用计划", en: "Plan" },
-    ],
-    rows: [
-      {
-        category: { zh: "AI 生成", en: "AI Generation" },
-        feature: { zh: "从提示生成", en: "Generate from Prompt" },
-        description: { zh: "输入自然语言描述，AI 生成完整初稿。", en: "Input a natural language description, and the AI generates a full first draft." },
-        plan: { zh: "所有计划", en: "All Plans" }
-      },
-      {
-        category: { zh: "AI 编辑", en: "AI Editing" },
-        feature: { zh: "与 AI 一同编辑", en: "Edit with AI" },
-        description: { zh: "通过聊天式指令修改内容，如“缩短”、“改变语气”。", en: "Modify content via chat-like commands, e.g., “shorten,” “change tone.”" },
-        plan: { zh: "所有计划", en: "All Plans" }
-      },
-      {
-        category: { zh: "AI 图像", en: "AI Images" },
-        feature: { zh: "图像生成与编辑", en: "Image Gen & Edit" },
-        description: { zh: "在编辑器内通过文本提示生成和修改图像。", en: "Generate and modify images via text prompts within the editor." },
-        plan: { zh: "所有计划 (Pro 增强)", en: "All (Pro Enhanced)" }
-      },
-      {
-        category: { zh: "设计", en: "Design" },
-        feature: { zh: "一键重塑风格", en: "One-Click Restyling" },
-        description: { zh: "一次点击即可更换整个作品的主题。", en: "Change the entire project&rsquo;s theme with a single click." },
-        plan: { zh: "所有计划", en: "All Plans" }
-      },
-      {
-        category: { zh: "品牌化", en: "Branding" },
-        feature: { zh: "页眉/页脚", en: "Headers/Footers" },
-        description: { zh: "为卡片统一添加 Logo、文本和页码。", en: "Add a uniform logo, text, and page numbers to cards." },
-        plan: { zh: "Pro", en: "Pro" }
-      },
-      {
-        category: { zh: "互动", en: "Interactivity" },
-        feature: { zh: "富媒体嵌入", en: "Media Embedding" },
-        description: { zh: "嵌入视频、GIF、Figma/Miro 等应用。", en: "Embed videos, GIFs, and apps like Figma/Miro." },
-        plan: { zh: "所有计划", en: "All Plans" }
-      },
-      {
-        category: { zh: "分享", en: "Sharing" },
-        feature: { zh: "导出为 PDF/PPTX", en: "Export to PDF/PPTX" },
-        description: { zh: "导出为 PDF 或 PowerPoint。PPTX 兼容性有限。", en: "Export as PDF or PowerPoint. PPTX compatibility is limited." },
-        plan: { zh: "所有计划", en: "All Plans" }
-      },
-      {
-        category: { zh: "分析", en: "Analytics" },
-        feature: { zh: "内置分析", en: "Built-in Analytics" },
-        description: { zh: "追踪观看者的互动数据。", en: "Track audience engagement data." },
-        plan: { zh: "所有计划 (Pro 增强)", en: "All (Pro Enhanced)" }
-      }
-    ]
-  },
-  strategicAnalysis: {
-    title: { zh: "第九部分：战略分析", en: "Part Nine: Strategic Analysis" },
-    subtitle: { zh: "市场定位与竞争展望", en: "Market Positioning & Competitive Outlook" },
-    conclusion: {
-      title: { zh: "最终结论与用户适用性建议", en: "Final Conclusion & User Suitability" },
-      gamma: {
-        title: { zh: "Gamma 最适合谁？", en: "Who is Gamma Best For?" },
-        text: { 
-          zh: "Gamma 是那些将**速度、现代美学和基于网络的互动性**置于首位的专业人士的理想选择。对于需要快速将想法原型化、为客户创建令人印象深刻的数字原生文档、或在短时间内制作出精美内容的顾问、销售和教育工作者来说，Gamma 提供的效率提升是革命性的。",
-          en: "Gamma is the ideal choice for professionals who prioritize **speed, modern aesthetics, and web-based interactivity**. For consultants, sales teams, and educators who need to quickly prototype ideas, create impressive digital-native documents for clients, or produce polished content in a short amount of time, the efficiency gains offered by Gamma are revolutionary."
-        }
-      },
-      others: {
-        title: { zh: "谁应该考虑其他选择？", en: "Who Should Consider Alternatives?" },
-        text: {
-          zh: "对于那些工作流程严格要求**像素级设计控制、复杂动画效果或与微软 Office 套件完美无瑕集成**的用户，传统的 PowerPoint 仍然是更稳妥的选择。如果最终交付物必须是格式稳定、可离线编辑的 PPTX 文件，那么直接使用原生工具会避免很多兼容性问题。",
-          en: "For users whose workflows strictly require **pixel-perfect design control, complex animations, or flawless integration with the Microsoft Office suite**, traditional PowerPoint remains a safer bet. If the final deliverable must be a format-stable, offline-editable PPTX file, using the native tool directly will avoid many compatibility issues."
-        }
-      }
-    }
-  }
-};
+interface SectionProps {
+  children: React.ReactNode;
+  className?: string;
+}
 
-type Language = 'zh' | 'en';
+interface LanguageToggleProps {
+  language: 'zh' | 'en';
+  onToggle: (lang: 'zh' | 'en') => void;
+}
 
-// Helper component for section titles
-const SectionHeader: React.FC<{
+interface ExpandableSectionProps {
   title: string;
-  subtitle: string;
-}> = ({ title, subtitle }) => (
-  <div className="mb-8 text-center">
-    <h2 className="text-3xl md:text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-indigo-500">
-      {title}
-    </h2>
-    <p className="mt-2 text-lg text-gray-400">{subtitle}</p>
+  titleEn: string;
+  children: React.ReactNode;
+  defaultExpanded?: boolean;
+}
+
+const LanguageToggle: React.FC<LanguageToggleProps> = ({ language, onToggle }) => (
+  <div className="fixed top-4 right-4 z-50 bg-white/90 backdrop-blur-sm rounded-full shadow-lg border border-purple-200">
+    <div className="flex items-center p-2">
+      <button
+        onClick={() => onToggle('zh')}
+        className={`px-3 py-1 rounded-full text-sm font-medium transition-all ${
+          language === 'zh' 
+            ? 'bg-purple-600 text-white shadow-md' 
+            : 'text-purple-600 hover:bg-purple-50'
+        }`}
+        aria-label="Switch to Chinese"
+      >
+        中文
+      </button>
+      <button
+        onClick={() => onToggle('en')}
+        className={`px-3 py-1 rounded-full text-sm font-medium transition-all ${
+          language === 'en' 
+            ? 'bg-purple-600 text-white shadow-md' 
+            : 'text-purple-600 hover:bg-purple-50'
+        }`}
+        aria-label="Switch to English"
+      >
+        EN
+      </button>
+    </div>
   </div>
 );
 
-// Helper component for content points
-const ContentPoint: React.FC<{
-  title: string;
-  text: string;
-}> = ({ title, text }) => (
-  <div className="bg-gray-800/50 p-6 rounded-xl shadow-lg backdrop-blur-sm border border-gray-700/50 transition-all duration-300 hover:border-purple-400/50 hover:shadow-purple-500/10">
-    <h3 className="text-xl font-semibold text-purple-300 mb-2">{title}</h3>
-    <p className="text-gray-300 leading-relaxed" dangerouslySetInnerHTML={{ __html: text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>') }} />
-  </div>
-);
-
-
-const GammaFeatureAnalysis: React.FC = () => {
-  const [language, setLanguage] = useState<Language>('zh');
-
-  const toggleLanguage = () => {
-    setLanguage(prev => (prev === 'zh' ? 'en' : 'zh'));
-  };
-
-  const t = useMemo(() => {
-    const translate = (data: any): any => {
-      // 1. Handle null/undefined or non-object types
-      if (typeof data !== 'object' || data === null) {
-        return data;
-      }
-
-      // 2. Handle arrays: recursively translate each item
-      if (Array.isArray(data)) {
-        return data.map(item => translate(item));
-      }
-
-      // 3. Handle translation objects: { zh: '...', en: '...' }
-      if (data.hasOwnProperty('zh') && data.hasOwnProperty('en')) {
-        return data[language];
-      }
-
-      // 4. Handle generic objects: recursively translate each property
-      const result: { [key: string]: any } = {};
-      for (const key in data) {
-        if (Object.prototype.hasOwnProperty.call(data, key)) {
-          result[key] = translate(data[key]);
-        }
-      }
-      return result;
-    };
-    return translate(contentData);
-  }, [language]);
-
+const ExpandableSection: React.FC<ExpandableSectionProps> = ({ 
+  title, 
+  titleEn, 
+  children, 
+  defaultExpanded = false 
+}) => {
+  const [isExpanded, setIsExpanded] = useState(defaultExpanded);
 
   return (
-    <div className="min-h-screen bg-gray-900 text-white font-sans">
-      <main className="container mx-auto px-4 py-8 md:py-12">
-        {/* Header */}
-        <header className="text-center mb-12 md:mb-16 relative">
-          <h1 className="text-4xl md:text-6xl font-extrabold mb-4 text-transparent bg-clip-text bg-gradient-to-br from-white to-purple-300">
-            {t.header.title}
-          </h1>
-          <p className="text-xl md:text-2xl text-gray-300">{t.header.subtitle}</p>
-          <button
-            onClick={toggleLanguage}
-            className="absolute top-0 right-0 mt-2 mr-2 md:mt-0 md:mr-0 bg-purple-600/50 text-white px-4 py-2 rounded-lg border border-purple-500/50 backdrop-blur-sm hover:bg-purple-500/70 transition-colors duration-300 flex items-center gap-2"
-            aria-label={t.header.toggle}
-          >
-             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M20 11.5a8.5 8.5 0 1 1-17 0 8.5 8.5 0 0 1 17 0Z"/><path d="M12 22v-2"/><path d="M2 12H0"/><path d="M22 12h-2"/><path d="M18.36 18.36.88.88"/><path d="M5.64 5.64.12.12"/><path d="M18.36 5.64.88.88"/><path d="M5.64 18.36.12.12"/><path d="M12 6V4"/><path d="m12 12-2-3-2 3"/><path d="M12 12h4"/></svg>
-            <span>{language === 'zh' ? 'EN' : '中文'}</span>
-          </button>
-        </header>
-
-        {/* Content Sections */}
-        {t.sections.map((section: any) => (
-          <section key={section.id} className="mb-16">
-            <SectionHeader title={section.title} subtitle={section.subtitle} />
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {section.points.map((point: any, index: number) => (
-                <ContentPoint key={index} title={point.title} text={point.text} />
-              ))}
-            </div>
-          </section>
-        ))}
-
-        {/* Feature Table Section */}
-        <section id="feature-table" className="mb-16">
-          <SectionHeader title={t.featureTable.title} subtitle={t.featureTable.subtitle} />
-          <div className="overflow-x-auto bg-gray-800/50 rounded-xl border border-gray-700/50 shadow-lg backdrop-blur-sm">
-            <table className="w-full text-left">
-              <thead className="bg-gray-700/50">
-                <tr>
-                  {t.featureTable.headers.map((header: string, index: number) => (
-                    <th key={index} className="p-4 font-semibold text-purple-300">{header}</th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody>
-                {t.featureTable.rows.map((row: any, rowIndex: number) => (
-                  <tr key={rowIndex} className="border-t border-gray-700/50 hover:bg-gray-700/30 transition-colors duration-200">
-                    <td className="p-4 text-gray-300">{row.category}</td>
-                    <td className="p-4 font-medium text-white">{row.feature}</td>
-                    <td className="p-4 text-gray-400">{row.description}</td>
-                    <td className="p-4">
-                      <span className={`px-3 py-1 text-sm rounded-full ${row.plan === 'Pro' ? 'bg-purple-500/20 text-purple-300' : 'bg-green-500/20 text-green-300'}`}>
-                        {row.plan}
-                      </span>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </section>
-
-        {/* Strategic Analysis Section */}
-        <section id="strategic-analysis" className="mb-12">
-          <SectionHeader title={t.strategicAnalysis.title} subtitle={t.strategicAnalysis.subtitle} />
-          <div className="bg-gray-800/50 p-8 rounded-xl shadow-lg backdrop-blur-sm border border-gray-700/50">
-            <h3 className="text-2xl font-bold text-center text-purple-300 mb-6">{t.strategicAnalysis.conclusion.title}</h3>
-            <div className="grid md:grid-cols-2 gap-8">
-              <div className="border-l-4 border-green-400 pl-4">
-                <h4 className="text-xl font-semibold text-green-300 mb-2">{t.strategicAnalysis.conclusion.gamma.title}</h4>
-                <p className="text-gray-300 leading-relaxed" dangerouslySetInnerHTML={{ __html: t.strategicAnalysis.conclusion.gamma.text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>') }} />
-              </div>
-              <div className="border-l-4 border-yellow-400 pl-4">
-                <h4 className="text-xl font-semibold text-yellow-300 mb-2">{t.strategicAnalysis.conclusion.others.title}</h4>
-                <p className="text-gray-300 leading-relaxed" dangerouslySetInnerHTML={{ __html: t.strategicAnalysis.conclusion.others.text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>') }} />
-              </div>
-            </div>
-          </div>
-        </section>
-
-        <footer className="text-center text-gray-500 mt-16">
-          <p>&copy; 2025 Gamma App Analysis. All information based on publicly available data.</p>
-        </footer>
-      </main>
+    <div className="border border-gray-200 rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-shadow">
+      <button
+        onClick={() => setIsExpanded(!isExpanded)}
+        className="w-full px-6 py-4 bg-gradient-to-r from-purple-50 to-pink-50 hover:from-purple-100 hover:to-pink-100 transition-all flex items-center justify-between text-left"
+        aria-expanded={isExpanded}
+        aria-controls={`section-${title.replace(/\s+/g, '-').toLowerCase()}`}
+      >
+        <h3 className="text-lg font-semibold text-gray-800">{title}</h3>
+        {isExpanded ? (
+          <ChevronDown className="h-5 w-5 text-purple-600" />
+        ) : (
+          <ChevronRight className="h-5 w-5 text-purple-600" />
+        )}
+      </button>
+      {isExpanded && (
+        <div 
+          id={`section-${title.replace(/\s+/g, '-').toLowerCase()}`}
+          className="px-6 py-4 bg-white"
+        >
+          {children}
+        </div>
+      )}
     </div>
   );
 };
 
-export default GammaFeatureAnalysis;
+const FeatureCard: React.FC<{
+  icon: React.ReactNode;
+  title: string;
+  titleEn: string;
+  description: string;
+  descriptionEn: string;
+  language: 'zh' | 'en';
+}> = ({ icon, title, titleEn, description, descriptionEn, language }) => (
+  <div className="bg-white rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 p-6 border border-gray-100 hover:border-purple-200">
+    <div className="flex items-center mb-4">
+      <div className="p-3 bg-gradient-to-br from-purple-500 to-pink-500 rounded-lg text-white">
+        {icon}
+      </div>
+      <h4 className="ml-3 text-lg font-semibold text-gray-800">
+        {language === 'zh' ? title : titleEn}
+      </h4>
+    </div>
+    <p className="text-gray-600 leading-relaxed">
+      {language === 'zh' ? description : descriptionEn}
+    </p>
+  </div>
+);
+
+const ComparisonTable: React.FC<{ language: 'zh' | 'en' }> = ({ language }) => (
+  <div className="overflow-x-auto bg-white rounded-lg shadow-lg border border-gray-200">
+    <table className="w-full">
+      <thead>
+        <tr className="bg-gradient-to-r from-purple-600 to-pink-600 text-white">
+          <th className="px-6 py-4 text-left font-semibold">
+            {language === 'zh' ? '特性/工具' : 'Feature/Tool'}
+          </th>
+          <th className="px-6 py-4 text-left font-semibold">Gamma.app</th>
+          <th className="px-6 py-4 text-left font-semibold">Canva</th>
+          <th className="px-6 py-4 text-left font-semibold">PowerPoint/Slides</th>
+          <th className="px-6 py-4 text-left font-semibold">Tome/Presentations.AI</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr className="border-b border-gray-100 hover:bg-purple-50 transition-colors">
+          <td className="px-6 py-4 font-semibold text-purple-700">
+            {language === 'zh' ? '核心理念' : 'Core Philosophy'}
+          </td>
+          <td className="px-6 py-4">
+            {language === 'zh' ? 'AI 设计伙伴 (速度与自动化)' : 'AI Design Partner (Speed & Automation)'}
+          </td>
+          <td className="px-6 py-4">
+            {language === 'zh' ? '人人都能设计 (灵活性与素材库)' : 'Design for Everyone (Flexibility & Assets)'}
+          </td>
+          <td className="px-6 py-4">
+            {language === 'zh' ? '传统幻灯片 (手动控制与普及性)' : 'Traditional Slides (Manual Control & Ubiquity)'}
+          </td>
+          <td className="px-6 py-4">
+            {language === 'zh' ? 'AI 叙事伙伴 (叙事与结构)' : 'AI Narrative Partner (Storytelling & Structure)'}
+          </td>
+        </tr>
+        <tr className="border-b border-gray-100 hover:bg-purple-50 transition-colors">
+          <td className="px-6 py-4 font-semibold text-green-700">
+            {language === 'zh' ? '主要优势' : 'Main Advantages'}
+          </td>
+          <td className="px-6 py-4 text-sm">
+            {language === 'zh' 
+              ? '从单一提示在数分钟内生成完整的、设计精良的初稿。交互式的网页原生感。' 
+              : 'Generate complete, well-designed drafts from a single prompt in minutes. Interactive web-native feel.'}
+          </td>
+          <td className="px-6 py-4 text-sm">
+            {language === 'zh' 
+              ? '庞大的模板、图形和素材库。高度的设计灵活性和手动定制能力。' 
+              : 'Vast library of templates, graphics, and assets. High design flexibility and manual customization.'}
+          </td>
+          <td className="px-6 py-4 text-sm">
+            {language === 'zh' 
+              ? '对每个元素拥有完全的手动控制权。普遍的兼容性和离线编辑能力。' 
+              : 'Complete manual control over every element. Universal compatibility and offline editing.'}
+          </td>
+          <td className="px-6 py-4 text-sm">
+            {language === 'zh' 
+              ? 'AI 驱动的叙事结构化和战略性说服力架构设计。' 
+              : 'AI-driven narrative structuring and strategic persuasive architecture design.'}
+          </td>
+        </tr>
+        <tr className="border-b border-gray-100 hover:bg-purple-50 transition-colors">
+          <td className="px-6 py-4 font-semibold text-red-700">
+            {language === 'zh' ? '主要劣势' : 'Main Disadvantages'}
+          </td>
+          <td className="px-6 py-4 text-sm">
+            {language === 'zh' 
+              ? '输出内容可能泛化，需要大量编辑。PowerPoint 导出保真度差。无离线模式。' 
+              : 'Output may be generic, requires extensive editing. Poor PowerPoint export fidelity. No offline mode.'}
+          </td>
+          <td className="px-6 py-4 text-sm">
+            {language === 'zh' 
+              ? 'AI 功能集成度较低，从零创建可能更耗时。' 
+              : 'Lower AI integration, creating from scratch may be more time-consuming.'}
+          </td>
+          <td className="px-6 py-4 text-sm">
+            {language === 'zh' 
+              ? '&ldquo;空白页综合症&rdquo;；设计完全手动，耗时且依赖设计能力。' 
+              : '&ldquo;Blank page syndrome&rdquo;; completely manual design, time-consuming and design-dependent.'}
+          </td>
+          <td className="px-6 py-4 text-sm">
+            {language === 'zh' 
+              ? '叙事优先的方法可能较为死板。美学主题选择相对较少。' 
+              : 'Narrative-first approach may be rigid. Relatively fewer aesthetic theme choices.'}
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+);
+
+const GammaAnalysis: React.FC = () => {
+  const [language, setLanguage] = useState<'zh' | 'en'>('zh');
+
+  const features = [
+    {
+      icon: <Bot className="h-6 w-6" />,
+      title: "AI 内容生成",
+      titleEn: "AI Content Generation",
+      description: "利用超过20种不同的AI模型，从简单提示自动生成完整的内容大纲、文本和视觉元素。",
+      descriptionEn: "Utilize over 20 different AI models to automatically generate complete content outlines, text, and visual elements from simple prompts."
+    },
+    {
+      icon: <Palette className="h-6 w-6" />,
+      title: "一键重塑风格",
+      titleEn: "One-Click Style Transformation",
+      description: "不改变内容的情况下，通过单击彻底更换整个作品的视觉主题，包括颜色、字体、背景和布局。",
+      descriptionEn: "Completely change the visual theme of your entire work, including colors, fonts, backgrounds, and layouts, without altering content."
+    },
+    {
+      icon: <Users className="h-6 w-6" />,
+      title: "实时协作",
+      titleEn: "Real-time Collaboration",
+      description: "类似Google Docs的多用户同时编辑功能，实时显示协作者光标和修改，支持评论和反应。",
+      descriptionEn: "Multi-user simultaneous editing like Google Docs, real-time display of collaborator cursors and changes, with comments and reactions support."
+    },
+    {
+      icon: <BarChart3 className="h-6 w-6" />,
+      title: "内置分析",
+      titleEn: "Built-in Analytics",
+      description: "追踪独立观看者、卡片参与度和观看时长，帮助创作者了解内容传播效果和观众互动情况。",
+      descriptionEn: "Track unique viewers, card engagement, and viewing time to help creators understand content reach and audience interaction."
+    },
+    {
+      icon: <Globe className="h-6 w-6" />,
+      title: "多平台嵌入",
+      titleEn: "Multi-platform Embedding",
+      description: "无缝嵌入YouTube、Figma、Miro、Airtable等平台内容，创建真正交互式的动态演示。",
+      descriptionEn: "Seamlessly embed content from YouTube, Figma, Miro, Airtable, and other platforms to create truly interactive dynamic presentations."
+    },
+    {
+      icon: <Zap className="h-6 w-6" />,
+      title: "智能布局",
+      titleEn: "Smart Layouts",
+      description: "AI分析内容并实时推荐最有效的布局方案，提供布局快速切换器进行即时优化。",
+      descriptionEn: "AI analyzes content and provides real-time recommendations for the most effective layout options, with a quick layout switcher for instant optimization."
+    }
+  ];
+
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-purple-50 via-pink-50 to-indigo-50">
+      <LanguageToggle language={language} onToggle={setLanguage} />
+      
+      {/* Hero Section */}
+      <section className="relative overflow-hidden bg-gradient-to-r from-purple-600 via-pink-600 to-indigo-600 text-white">
+        <div className="absolute inset-0 bg-black/10"></div>
+        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24">
+          <div className="text-center space-y-8">
+            <div className="inline-flex items-center px-4 py-2 bg-white/20 rounded-full text-sm font-medium backdrop-blur-sm">
+              <Star className="h-4 w-4 mr-2" />
+              {language === 'zh' ? '2025年深度分析报告' : '2025 In-Depth Analysis Report'}
+            </div>
+            <h1 className="text-4xl md:text-6xl font-bold leading-tight">
+              {language === 'zh' ? (
+                <>
+                  Gamma App<br />
+                  <span className="text-pink-200">深度解析</span>
+                </>
+              ) : (
+                <>
+                  Gamma App<br />
+                  <span className="text-pink-200">Deep Analysis</span>
+                </>
+              )}
+            </h1>
+            <p className="text-xl md:text-2xl text-purple-100 max-w-3xl mx-auto leading-relaxed">
+              {language === 'zh' 
+                ? '功能、用法与战略定位综合指南 - 重新定义数字内容的创作与分享方式'
+                : 'Comprehensive Guide to Features, Usage & Strategic Positioning - Redefining Digital Content Creation and Sharing'}
+            </p>
+            <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
+              <div className="flex items-center space-x-2 bg-white/20 px-4 py-2 rounded-lg backdrop-blur-sm">
+                <Globe className="h-5 w-5" />
+                <span>{language === 'zh' ? '网页应用' : 'Web Application'}</span>
+              </div>
+              <div className="flex items-center space-x-2 bg-white/20 px-4 py-2 rounded-lg backdrop-blur-sm">
+                <Bot className="h-5 w-5" />
+                <span>{language === 'zh' ? 'AI 驱动' : 'AI-Powered'}</span>
+              </div>
+              <div className="flex items-center space-x-2 bg-white/20 px-4 py-2 rounded-lg backdrop-blur-sm">
+                <Users className="h-5 w-5" />
+                <span>{language === 'zh' ? '团队协作' : 'Team Collaboration'}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 space-y-16">
+        {/* Executive Summary */}
+        <section className="bg-white rounded-2xl shadow-xl p-8 border border-gray-100">
+          <div className="text-center mb-8">
+            <h2 className="text-3xl font-bold text-gray-800 mb-4">
+              {language === 'zh' ? '执行摘要' : 'Executive Summary'}
+            </h2>
+            <div className="w-24 h-1 bg-gradient-to-r from-purple-600 to-pink-600 mx-auto rounded-full"></div>
+          </div>
+          
+          <div className="grid md:grid-cols-2 gap-8 items-center">
+            <div className="space-y-6">
+              <p className="text-lg text-gray-700 leading-relaxed">
+                {language === 'zh' ? (
+                  <>
+                    Gamma 将自身定位为<strong>&ldquo;AI 设计伙伴&rdquo;</strong>，而非简单的软件工具。它旨在将繁琐、耗时的设计与格式化工作自动化，从而解放用户，使其能够完全专注于内容的实质、叙事和思想本身。
+                  </>
+                ) : (
+                  <>
+                    Gamma positions itself as an <strong>&ldquo;AI Design Partner&rdquo;</strong> rather than a simple software tool. It aims to automate tedious, time-consuming design and formatting work, thereby freeing users to focus entirely on content substance, narrative, and ideas themselves.
+                  </>
+                )}
+              </p>
+              
+              <div className="grid grid-cols-2 gap-4">
+                <div className="bg-purple-50 p-4 rounded-lg">
+                  <FileText className="h-8 w-8 text-purple-600 mb-2" />
+                  <h4 className="font-semibold text-purple-800">
+                    {language === 'zh' ? '演示文稿' : 'Presentations'}
+                  </h4>
+                  <p className="text-sm text-purple-600">
+                    {language === 'zh' ? '数分钟内创建精美幻灯片' : 'Create beautiful slides in minutes'}
+                  </p>
+                </div>
+                <div className="bg-pink-50 p-4 rounded-lg">
+                  <Monitor className="h-8 w-8 text-pink-600 mb-2" />
+                  <h4 className="font-semibold text-pink-800">
+                    {language === 'zh' ? '网站' : 'Websites'}
+                  </h4>
+                  <p className="text-sm text-pink-600">
+                    {language === 'zh' ? '无需编码快速构建' : 'Build quickly without coding'}
+                  </p>
+                </div>
+              </div>
+            </div>
+            
+            <div className="bg-gradient-to-br from-purple-100 to-pink-100 p-6 rounded-xl">
+              <div className="text-center">
+                <div className="inline-flex items-center justify-center w-16 h-16 bg-white rounded-full shadow-lg mb-4">
+                  <Bot className="h-8 w-8 text-purple-600" />
+                </div>
+                <h3 className="text-xl font-bold text-gray-800 mb-2">
+                  {language === 'zh' ? '关键概念' : 'Key Concept'}
+                </h3>
+                <p className="text-gray-700">
+                  {language === 'zh' ? (
+                    <>
+                      理解<strong>&ldquo;卡片&rdquo;</strong>而非<strong>&ldquo;幻灯片&rdquo;</strong> - 一种灵活、可自动调整大小的内容容器，更像是网页的区块或章节。
+                    </>
+                  ) : (
+                    <>
+                      Understanding <strong>&ldquo;Cards&rdquo;</strong> instead of <strong>&ldquo;Slides&rdquo;</strong> - flexible, auto-resizing content containers that work more like web page blocks or sections.
+                    </>
+                  )}
+                </p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* Core Features */}
+        <section>
+          <div className="text-center mb-12">
+            <h2 className="text-3xl font-bold text-gray-800 mb-4">
+              {language === 'zh' ? '核心功能特性' : 'Core Features'}
+            </h2>
+            <p className="text-lg text-gray-600 max-w-3xl mx-auto">
+              {language === 'zh' 
+                ? 'Gamma 提供了一套完整的 AI 驱动工具，重新定义了内容创作的工作流程'
+                : 'Gamma provides a comprehensive suite of AI-driven tools that redefine content creation workflows'}
+            </p>
+          </div>
+          
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {features.map((feature, index) => (
+              <FeatureCard
+                key={index}
+                icon={feature.icon}
+                title={feature.title}
+                titleEn={feature.titleEn}
+                description={feature.description}
+                descriptionEn={feature.descriptionEn}
+                language={language}
+              />
+            ))}
+          </div>
+        </section>
+
+        {/* 2025 Updates */}
+        <section className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-2xl p-8">
+          <div className="text-center mb-8">
+            <div className="inline-flex items-center px-4 py-2 bg-blue-100 rounded-full text-blue-800 font-semibold mb-4">
+              <Zap className="h-4 w-4 mr-2" />
+              {language === 'zh' ? '2025年最新更新' : '2025 Latest Updates'}
+            </div>
+            <h2 className="text-3xl font-bold text-gray-800">
+              {language === 'zh' ? '最新功能发布' : 'Latest Feature Releases'}
+            </h2>
+          </div>
+          
+          <div className="grid md:grid-cols-2 gap-8">
+            <div className="bg-white p-6 rounded-xl shadow-md">
+              <div className="flex items-center mb-4">
+                <div className="p-2 bg-green-100 rounded-lg">
+                  <CheckCircle className="h-6 w-6 text-green-600" />
+                </div>
+                <div className="ml-3">
+                  <h3 className="text-lg font-semibold text-gray-800">
+                    {language === 'zh' ? '2025年6月' : 'June 2025'}
+                  </h3>
+                  <p className="text-sm text-gray-600">
+                    {language === 'zh' ? '内容风格微调' : 'Content Style Fine-tuning'}
+                  </p>
+                </div>
+              </div>
+              <p className="text-gray-700">
+                {language === 'zh' 
+                  ? '新增四个详细程度选项：极简、简洁、详细、详尽，让用户对AI生成内容有更精细的控制。'
+                  : 'Added four detail level options: Minimal, Concise, Detailed, Extensive, giving users finer control over AI-generated content.'}
+              </p>
+            </div>
+            
+            <div className="bg-white p-6 rounded-xl shadow-md">
+              <div className="flex items-center mb-4">
+                <div className="p-2 bg-purple-100 rounded-lg">
+                  <Palette className="h-6 w-6 text-purple-600" />
+                </div>
+                <div className="ml-3">
+                  <h3 className="text-lg font-semibold text-gray-800">
+                    {language === 'zh' ? '2025年5月' : 'May 2025'}
+                  </h3>
+                  <p className="text-sm text-gray-600">
+                    {language === 'zh' ? '17个全新主题' : '17 New Themes'}
+                  </p>
+                </div>
+              </div>
+              <p className="text-gray-700">
+                {language === 'zh' 
+                  ? '一次性新增17个设计主题，满足从大胆、简约到俏皮、精致等各种风格需求。'
+                  : 'Added 17 design themes at once, catering to various style needs from bold and minimalist to playful and sophisticated.'}
+              </p>
+            </div>
+            
+            <div className="bg-white p-6 rounded-xl shadow-md">
+              <div className="flex items-center mb-4">
+                <div className="p-2 bg-pink-100 rounded-lg">
+                  <Bot className="h-6 w-6 text-pink-600" />
+                </div>
+                <div className="ml-3">
+                  <h3 className="text-lg font-semibold text-gray-800">
+                    {language === 'zh' ? '2025年4月' : 'April 2025'}
+                  </h3>
+                  <p className="text-sm text-gray-600">
+                    {language === 'zh' ? 'AI图像编辑与动画' : 'AI Image Editing & Animation'}
+                  </p>
+                </div>
+              </div>
+              <p className="text-gray-700">
+                {language === 'zh' 
+                  ? '推出AI图像编辑功能，支持局部修改、背景更换；Pro用户可为图像添加动态效果。'
+                  : 'Launched AI image editing with local modifications and background replacement; Pro users can add dynamic effects to images.'}
+              </p>
+            </div>
+            
+            <div className="bg-white p-6 rounded-xl shadow-md">
+              <div className="flex items-center mb-4">
+                <div className="p-2 bg-indigo-100 rounded-lg">
+                  <Users className="h-6 w-6 text-indigo-600" />
+                </div>
+                <div className="ml-3">
+                  <h3 className="text-lg font-semibold text-gray-800">
+                    {language === 'zh' ? '2025年3月' : 'March 2025'}
+                  </h3>
+                  <p className="text-sm text-gray-600">
+                    {language === 'zh' ? '协作增强' : 'Collaboration Enhancement'}
+                  </p>
+                </div>
+              </div>
+              <p className="text-gray-700">
+                {language === 'zh' 
+                  ? '新增隐藏卡片功能和跨文稿复制功能，提升团队协作效率。'
+                  : 'Added hidden card functionality and cross-document copying to enhance team collaboration efficiency.'}
+              </p>
+            </div>
+          </div>
+        </section>
+
+        {/* Comparison Analysis */}
+        <section>
+          <div className="text-center mb-12">
+            <h2 className="text-3xl font-bold text-gray-800 mb-4">
+              {language === 'zh' ? '竞争格局分析' : 'Competitive Landscape Analysis'}
+            </h2>
+            <p className="text-lg text-gray-600 max-w-3xl mx-auto">
+              {language === 'zh' 
+                ? 'Gamma与主要竞争对手的深度对比分析，帮助您选择最适合的工具'
+                : 'In-depth comparison analysis of Gamma with major competitors to help you choose the right tool'}
+            </p>
+          </div>
+          
+          <ComparisonTable language={language} />
+        </section>
+
+        {/* Use Cases & Strategic Recommendations */}
+        <section className="space-y-8">
+          <div className="text-center">
+            <h2 className="text-3xl font-bold text-gray-800 mb-4">
+              {language === 'zh' ? '应用场景与战略建议' : 'Use Cases & Strategic Recommendations'}
+            </h2>
+          </div>
+          
+          <div className="space-y-6">
+            <ExpandableSection 
+              title="顾问/销售专业人士" 
+              titleEn="Consultants/Sales Professionals"
+              defaultExpanded={true}
+            >
+              <div className="space-y-4">
+                <div className="bg-green-50 p-4 rounded-lg border-l-4 border-green-500">
+                  <h4 className="font-semibold text-green-800 mb-2">
+                    {language === 'zh' ? '核心用途' : 'Core Uses'}
+                  </h4>
+                  <p className="text-green-700">
+                    {language === 'zh' 
+                      ? '快速生成客户提案和项目初期演示，将会议记录转化为精美的跟进方案。'
+                      : 'Quickly generate client proposals and initial project presentations, transform meeting notes into polished follow-up proposals.'}
+                  </p>
+                </div>
+                <div className="bg-blue-50 p-4 rounded-lg border-l-4 border-blue-500">
+                  <h4 className="font-semibold text-blue-800 mb-2">
+                    {language === 'zh' ? '战略建议' : 'Strategic Recommendations'}
+                  </h4>
+                  <p className="text-blue-700">
+                    {language === 'zh' 
+                      ? '充分利用"粘贴文本"功能，密切关注"分析"功能来判断客户最感兴趣的部分。'
+                      : 'Make full use of the "Paste Text" feature and closely monitor "Analytics" to identify the parts that interest clients most.'}
+                  </p>
+                </div>
+              </div>
+            </ExpandableSection>
+
+            <ExpandableSection 
+              title="教育工作者/学生" 
+              titleEn="Educators/Students"
+            >
+              <div className="space-y-4">
+                <div className="bg-purple-50 p-4 rounded-lg border-l-4 border-purple-500">
+                  <h4 className="font-semibold text-purple-800 mb-2">
+                    {language === 'zh' ? '核心用途' : 'Core Uses'}
+                  </h4>
+                  <p className="text-purple-700">
+                    {language === 'zh' 
+                      ? '创建互动式课件、教学材料和项目演示，嵌入教学视频和在线测验。'
+                      : 'Create interactive courseware, teaching materials, and project presentations, embed instructional videos and online quizzes.'}
+                  </p>
+                </div>
+                <div className="bg-indigo-50 p-4 rounded-lg border-l-4 border-indigo-500">
+                  <h4 className="font-semibold text-indigo-800 mb-2">
+                    {language === 'zh' ? '战略建议' : 'Strategic Recommendations'}
+                  </h4>
+                  <p className="text-indigo-700">
+                    {language === 'zh' 
+                      ? '善用嵌入功能创造丰富的学习体验，制作深度报告时选用"详尽"的内容风格。'
+                      : 'Make good use of embedding features to create rich learning experiences, choose "Extensive" content style for in-depth reports.'}
+                  </p>
+                </div>
+              </div>
+            </ExpandableSection>
+
+            <ExpandableSection 
+              title="初创公司创始人" 
+              titleEn="Startup Founders"
+            >
+              <div className="space-y-4">
+                <div className="bg-pink-50 p-4 rounded-lg border-l-4 border-pink-500">
+                  <h4 className="font-semibold text-pink-800 mb-2">
+                    {language === 'zh' ? '核心用途' : 'Core Uses'}
+                  </h4>
+                  <p className="text-pink-700">
+                    {language === 'zh' 
+                      ? '制作投资人路演PPT和快速验证商业想法的单页网站。'
+                      : 'Create investor pitch decks and single-page websites for quickly validating business ideas.'}
+                  </p>
+                </div>
+                <div className="bg-orange-50 p-4 rounded-lg border-l-4 border-orange-500">
+                  <h4 className="font-semibold text-orange-800 mb-2">
+                    {language === 'zh' ? '战略建议' : 'Strategic Recommendations'}
+                  </h4>
+                  <p className="text-orange-700">
+                    {language === 'zh' 
+                      ? '利用速度优势快速迭代测试，使用"跨文稿复制卡片"为不同受众创建定制版本。'
+                      : 'Leverage speed advantages for rapid iteration testing, use "cross-document card copying" to create customized versions for different audiences.'}
+                  </p>
+                </div>
+              </div>
+            </ExpandableSection>
+
+            <ExpandableSection 
+              title="市场营销人员" 
+              titleEn="Marketing Professionals"
+            >
+              <div className="space-y-4">
+                <div className="bg-teal-50 p-4 rounded-lg border-l-4 border-teal-500">
+                  <h4 className="font-semibold text-teal-800 mb-2">
+                    {language === 'zh' ? '核心用途' : 'Core Uses'}
+                  </h4>
+                  <p className="text-teal-700">
+                    {language === 'zh' 
+                      ? '生成社交媒体图文、营销活动简报和项目提案。'
+                      : 'Generate social media graphics and copy, marketing campaign briefs, and project proposals.'}
+                  </p>
+                </div>
+                <div className="bg-cyan-50 p-4 rounded-lg border-l-4 border-cyan-500">
+                  <h4 className="font-semibold text-cyan-800 mb-2">
+                    {language === 'zh' ? '战略建议' : 'Strategic Recommendations'}
+                  </h4>
+                  <p className="text-cyan-700">
+                    {language === 'zh' 
+                      ? '务必设置"品牌套件"确保视觉一致性，利用网站功能快速创建营销活动登陆页面。'
+                      : 'Be sure to set up "Brand Kit" to ensure visual consistency, use website features to quickly create marketing campaign landing pages.'}
+                  </p>
+                </div>
+              </div>
+            </ExpandableSection>
+          </div>
+        </section>
+
+        {/* Limitations & Considerations */}
+        <section className="bg-amber-50 rounded-2xl p-8 border border-amber-200">
+          <div className="text-center mb-8">
+            <div className="inline-flex items-center justify-center w-12 h-12 bg-amber-100 rounded-full mb-4">
+              <AlertTriangle className="h-6 w-6 text-amber-600" />
+            </div>
+            <h2 className="text-3xl font-bold text-gray-800 mb-4">
+              {language === 'zh' ? '性能与局限性' : 'Performance & Limitations'}
+            </h2>
+          </div>
+          
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="bg-white p-6 rounded-lg shadow-sm border border-amber-100">
+              <div className="flex items-center mb-3">
+                <AlertTriangle className="h-5 w-5 text-red-500 mr-2" />
+                <h3 className="font-semibold text-gray-800">
+                  {language === 'zh' ? '导出保真度' : 'Export Fidelity'}
+                </h3>
+              </div>
+              <p className="text-gray-600 text-sm">
+                {language === 'zh' 
+                  ? '导出为PowerPoint时可能出现格式错乱、文本溢出或字体不匹配等问题。'
+                  : 'May experience format distortion, text overflow, or font mismatches when exporting to PowerPoint.'}
+              </p>
+            </div>
+            
+            <div className="bg-white p-6 rounded-lg shadow-sm border border-amber-100">
+              <div className="flex items-center mb-3">
+                <Globe className="h-5 w-5 text-blue-500 mr-2" />
+                <h3 className="font-semibold text-gray-800">
+                  {language === 'zh' ? '网络依赖' : 'Network Dependency'}
+                </h3>
+              </div>
+              <p className="text-gray-600 text-sm">
+                {language === 'zh' 
+                  ? '完全基于云端，需要持续稳定的网络连接，不提供离线编辑功能。'
+                  : 'Completely cloud-based, requires continuous stable internet connection, no offline editing available.'}
+              </p>
+            </div>
+            
+            <div className="bg-white p-6 rounded-lg shadow-sm border border-amber-100">
+              <div className="flex items-center mb-3">
+                <Palette className="h-5 w-5 text-purple-500 mr-2" />
+                <h3 className="font-semibold text-gray-800">
+                  {language === 'zh' ? '模板重复性' : 'Template Repetition'}
+                </h3>
+              </div>
+              <p className="text-gray-600 text-sm">
+                {language === 'zh' 
+                  ? '底层卡片布局种类相对有限，频繁使用可能导致作品在结构上显得千篇一律。'
+                  : 'Relatively limited underlying card layout varieties, frequent use may lead to structurally similar works.'}
+              </p>
+            </div>
+          </div>
+        </section>
+
+        {/* Final Conclusion */}
+        <section className="bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-2xl p-8">
+          <div className="text-center space-y-6">
+            <h2 className="text-3xl font-bold mb-4">
+              {language === 'zh' ? '最终结论' : 'Final Conclusion'}
+            </h2>
+            <p className="text-xl text-purple-100 max-w-4xl mx-auto leading-relaxed">
+              {language === 'zh' ? (
+                <>
+                  Gamma 是一款为特定目的而生的革命性工具。它最大的价值在于消除内容创作过程中最耗时、最令人头疼的两个环节：<strong>初始结构搭建</strong>和<strong>视觉设计</strong>。
+                </>
+              ) : (
+                <>
+                  Gamma is a revolutionary tool built for specific purposes. Its greatest value lies in eliminating the two most time-consuming and frustrating aspects of content creation: <strong>initial structure building</strong> and <strong>visual design</strong>.
+                </>
+              )}
+            </p>
+            <div className="bg-white/10 backdrop-blur-sm rounded-xl p-6 max-w-3xl mx-auto">
+              <p className="text-lg text-purple-100">
+                {language === 'zh' ? (
+                  <>
+                    它应该被视为一个<strong>&ldquo;初稿加速器&rdquo;</strong>和<strong>&ldquo;创意放大器&rdquo;</strong>。在这个新的人机协作范式中，用户的角色被提升了——从手动的排版工转变为战略性的编辑和思想的提炼者。
+                  </>
+                ) : (
+                  <>
+                    It should be viewed as a <strong>&ldquo;Draft Accelerator&rdquo;</strong> and <strong>&ldquo;Creative Amplifier&rdquo;</strong>. In this new human-AI collaboration paradigm, the user&rsquo;s role is elevated—from manual typesetter to strategic editor and idea refiner.
+                  </>
+                )}
+              </p>
+            </div>
+            <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mt-8">
+              <a 
+                href="https://gamma.app" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="inline-flex items-center px-6 py-3 bg-white text-purple-600 font-semibold rounded-lg hover:bg-purple-50 transition-colors"
+              >
+                <ExternalLink className="h-5 w-5 mr-2" />
+                {language === 'zh' ? '访问 Gamma.app' : 'Visit Gamma.app'}
+              </a>
+              <div className="flex items-center space-x-2 text-purple-100">
+                <Share2 className="h-5 w-5" />
+                <span className="text-sm">
+                  {language === 'zh' ? '分享这份分析报告' : 'Share this analysis report'}
+                </span>
+              </div>
+            </div>
+          </div>
+        </section>
+      </main>
+
+      {/* Footer */}
+      <footer className="bg-gray-900 text-white py-12">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center space-y-4">
+            <p className="text-gray-400">
+              {language === 'zh' ? (
+                <>
+                  本报告基于 Gamma App 2025年功能分析 | 
+                  <a href="#" className="text-purple-400 hover:text-purple-300 transition-colors ml-1">
+                    详细文档参考
+                  </a>
+                </>
+              ) : (
+                <>
+                  This report is based on Gamma App 2025 feature analysis | 
+                  <a href="#" className="text-purple-400 hover:text-purple-300 transition-colors ml-1">
+                    Detailed documentation reference
+                  </a>
+                </>
+              )}
+            </p>
+            <p className="text-sm text-gray-500">
+              {language === 'zh' 
+                ? '© 2025 Gamma App 深度分析。本报告仅供参考，所有商标归其各自所有者所有。'
+                : '© 2025 Gamma App Deep Analysis. This report is for reference only. All trademarks belong to their respective owners.'}
+            </p>
+          </div>
+        </div>
+      </footer>
+    </div>
+  );
+};
+
+export default GammaAnalysis;
