@@ -1,11 +1,13 @@
 "use client";
 
 import React, { useState, useMemo, useEffect } from 'react';
+import Image from 'next/image';
 
 // TypeScript Interfaces for type safety
 interface ToolInfo {
   name: { zh: string; en: string };
   link: string;
+  image?: string; // Optional image path
   example: { zh: string; en: string };
   info: { zh: string; en: string };
 }
@@ -35,6 +37,8 @@ const aiToolsData: ToolScenario[] = [
         tools: [
             { name: { zh: 'Descript', en: 'Descript' }, link: 'https://www.descript.com', example: { zh: '将采访录音转为可编辑文本，自动去除填充词。', en: 'Convert interview recordings into editable text, automatically removing filler words.' }, info: { zh: '免费计划提供1小时转录，付费$12/月起。', en: 'Free plan offers 1 hour of transcription, paid plans start at $12/month.' } },
             { name: { zh: 'ElevenLabs', en: 'ElevenLabs' }, link: 'https://www.elevenlabs.io', example: { zh: '转录多达32位发言者的会议音频。', en: 'Transcribe meeting audio with up to 32 speakers.' }, info: { zh: '免费计划提供10,000字符/月。', en: 'Free plan offers 10,000 characters/month.' } },
+            { name: { zh: 'MS Word online version', en: 'MS Word online version' }, link: 'https://www.microsoft.com/en-us/microsoft-365/online-document-editor', image: '/tools/Transcribe-word.png', example: { zh: '在Word Online中直接进行语音转录，方便地在文档中整理和编辑。', en: 'Transcribe audio directly in Word Online for easy organization and editing within your document.' }, info: { zh: '通常包含在Microsoft 365订阅中。', en: 'Usually included with a Microsoft 365 subscription.' } },
+            { name: { zh: 'oTranscribe', en: 'oTranscribe' }, link: 'https://otranscribe.com/', example: { zh: '一个免费的开源在线工具，集成了音频播放器和文本编辑器，可以通过快捷键控制音频，提高手动转录效率。', en: 'A free, open-source online tool that integrates an audio player and text editor. Control audio with shortcuts to improve manual transcription efficiency.' }, info: { zh: '完全免费。', en: 'Completely free.' } },
         ]
     },
     {
@@ -249,8 +253,8 @@ const aiToolsData: ToolScenario[] = [
         category: { zh: '个人生产力与学习', en: 'Personal Productivity & Learning' },
         scenario: { zh: '自动生成思维导图', en: 'Automatic Mind Map Generation' },
         tools: [
-            { name: { zh: 'Taskade', en: 'Taskade' }, link: 'https://www.taskade.com', example: { zh: '使用AI协助创建协作思维导图。', en: 'Use AI to assist in creating collaborative mind maps.' }, info: { zh: '免费和付费计划。', en: 'Free and paid plans.' } },
-            { name: { zh: 'Xmind AI', en: 'Xmind AI' }, link: 'https://xmind.ai', example: { zh: '使用AI生成和组织思维导图。', en: 'Use AI to generate and organize mind maps.' }, info: { zh: '网站提供定价信息。', en: 'Pricing information available on the website.' } },
+            { name: { zh: 'NotebookLM', en: 'NotebookLM' }, link: 'https://notebooklm.google.com', example: { zh: '生成可可视化为思维导图的结构化笔记。', en: 'Generate structured notes that can be visualized as a mind map.' }, info: { zh: '免费。', en: 'Free.' } },
+            { name: { zh: 'Felo AI', en: 'Felo AI' }, link: 'https://felo.ai', example: { zh: '有生成mindmap的模板。', en: 'Has templates for generating mind maps.' }, info: { zh: '每天免费3次。', en: '3 free uses per day.' } },
         ]
     },
     {
@@ -332,6 +336,17 @@ const ToolModal: React.FC<{ tool: ToolInfo | null; scenario: string; lang: Langu
                 <div className="space-y-6">
                     <div>
                         <h3 className="text-lg font-semibold text-slate-800 border-b pb-2 mb-3">🚀 {lang === 'zh' ? '应用示例' : 'Application Example'}</h3>
+                        {tool.image && (
+                            <div className="mb-4">
+                                <Image 
+                                    src={tool.image} 
+                                    alt={`${tool.name[lang]} screenshot`}
+                                    width={600}
+                                    height={400}
+                                    className="rounded-lg shadow-md w-full h-auto"
+                                />
+                            </div>
+                        )}
                         <p className="text-slate-600 leading-relaxed">{tool.example[lang]}</p>
                     </div>
                     <div>
