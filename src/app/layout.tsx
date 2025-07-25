@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
+import Script from "next/script"; // 1. 导入 Script 组件
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -28,6 +29,23 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         {children}
+
+        {/* 2. Chatbase 配置脚本 */}
+        <Script id="chatbase-config" strategy="lazyOnload">
+          {`
+            window.chatbaseConfig = {
+              chatbotId: "ctFVfk_H4z1Mu0e1NmrxH",
+            }
+          `}
+        </Script>
+
+        {/* 3. Chatbase 加载脚本 */}
+        <Script
+          src="https://www.chatbase.co/embed.min.js"
+          id="chatbase-embed"
+          strategy="lazyOnload"
+          async
+        />
       </body>
     </html>
   );
