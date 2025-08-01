@@ -30,12 +30,51 @@ export default function RootLayout({
       >
         {children}
 
-        {/* New Chatbot */}
+        {/* Botpress Chatbot */}
         <Script
-          src="https://files.bpcontent.cloud/2025/08/01/07/20250801071722-R3TI0238.js"
+          src="https://cdn.botpress.cloud/webchat/v3.1/inject.js"
           strategy="lazyOnload"
-          async
         />
+        <Script id="botpress-config" strategy="lazyOnload">
+          {`
+            function initBotpress() {
+              if (window.botpress) {
+                window.botpress.on("webchat:ready", () => {
+                  window.botpress.open();
+                });
+                window.botpress.init({
+                  "botId": "91edec7c-4588-43a3-9901-ab4a9e12fd9d",
+                  "configuration": {
+                    "version": "v1",
+                    "botName": "Gamma Support Agent",
+                    "botAvatar": "https://files.bpcontent.cloud/2025/08/01/07/20250801072352-TJM4E5EE.png",
+                    "botDescription": "I can help you resolve issues and guide you in using Gamma's AI-powered content creation and design tools. Ask me anything about features, troubleshooting, or getting the most out of your Gamma experience.",
+                    "website": {
+                      "title": "Website",
+                      "link": "https://gamma.app/"
+                    },
+                    "email": {},
+                    "phone": {},
+                    "termsOfService": {},
+                    "privacyPolicy": {},
+                    "color": "#183C6C",
+                    "variant": "solid",
+                    "headerVariant": "glass",
+                    "themeMode": "light",
+                    "fontFamily": "inter",
+                    "radius": 2,
+                    "feedbackEnabled": true,
+                    "footer": "[⚡ by Botpress](https://botpress.com/?from=webchat)"
+                  },
+                  "clientId": "4e6f3ff0-3417-4488-a841-e46837b50bd4"
+                });
+              } else {
+                setTimeout(initBotpress, 100);
+              }
+            }
+            initBotpress();
+          `}
+        </Script>
       </body>
     </html>
   );
