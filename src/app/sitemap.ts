@@ -1,7 +1,7 @@
 import { MetadataRoute } from 'next'
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  // TODO: 在 Vercel 和 Netlify 的环境变量中设置 SITE_URL
+  // TODO: 将 'https://your-website-url.com' 替换为您的真实域名
   const baseUrl = process.env.SITE_URL || 'http://localhost:3000';
 
   const staticRoutes = [
