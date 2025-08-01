@@ -30,21 +30,13 @@ export default function RootLayout({
       >
         {children}
 
-        {/* 2. Chatbase 配置脚本 */}
-        <Script id="chatbase-config" strategy="lazyOnload">
-          {`
-            window.chatbaseConfig = {
-              chatbotId: "ctFVfk_H4z1Mu0e1NmrxH",
-            }
-          `}
-        </Script>
-
-        {/* 3. Chatbase 加载脚本 */}
+        {/* Easy-Peasy.AI Chatbot */}
         <Script
-          src="https://www.chatbase.co/embed.min.js"
-          id="chatbase-embed"
+          src="https://bots.easy-peasy.ai/chat.min.js"
+          data-chat-url="https://bots.easy-peasy.ai/bot/75718f5c-f941-4636-b7ea-df0473c95a3c"
+          data-btn-position="bottom-right"
+          data-widget-btn-color="#6366f1"
           strategy="lazyOnload"
-          async
         />
       </body>
     </html>
