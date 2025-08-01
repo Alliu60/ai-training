@@ -30,13 +30,11 @@ export default function RootLayout({
       >
         {children}
 
-        {/* Easy-Peasy.AI Chatbot */}
+        {/* New Chatbot */}
         <Script
-          src="https://bots.easy-peasy.ai/chat.min.js"
-          data-chat-url="https://bots.easy-peasy.ai/bot/75718f5c-f941-4636-b7ea-df0473c95a3c"
-          data-btn-position="bottom-right"
-          data-widget-btn-color="#6366f1"
+          src="https://files.bpcontent.cloud/2025/08/01/07/20250801071722-R3TI0238.js"
           strategy="lazyOnload"
+          async
         />
       </body>
     </html>
