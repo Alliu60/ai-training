@@ -19,7 +19,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     '/Study-Gemini_NotebookLM'
   ];
 
-  const sitemapEntries = staticRoutes.map((route) => ({
+  const sitemapEntries: MetadataRoute.Sitemap = staticRoutes.map((route) => ({
     url: `${baseUrl}${route}`,
     lastModified: new Date(),
     changeFrequency: 'daily',
