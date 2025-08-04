@@ -46,12 +46,12 @@ export default function RootLayout({
                   "botId": "91edec7c-4588-43a3-9901-ab4a9e12fd9d",
                   "configuration": {
                     "version": "v1",
-                    "botName": "Gamma Support Agent",
+                    "botName": "AI Support Agent",
                     "botAvatar": "https://files.bpcontent.cloud/2025/08/01/07/20250801072352-TJM4E5EE.png",
-                    "botDescription": "I can help you resolve issues and guide you in using Gamma's AI-powered content creation and design tools. Ask me anything about features, troubleshooting, or getting the most out of your Gamma experience.",
+                    "botDescription": "I can help you resolve issues and guide you in using AI-powered content creation and design tools. Ask me anything about features, troubleshooting, or getting the most out of your AI tools experience.",
                     "website": {
                       "title": "Website",
-                      "link": "https://gamma.app/"
+                      "link": "https://ai-shared.netlify.app/"
                     },
                     "email": {},
                     "phone": {},
