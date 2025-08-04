@@ -3,26 +3,39 @@
 import React, { useState } from "react";
 import { Globe, BookOpen, Mic, Video, Share, Brain, FileText, MessageCircle } from "lucide-react";
 
-export default function NotebookLMFeatures() {
-  const [currentLang, setCurrentLang] = useState("zh");
+interface LanguageText {
+  zh: string;
+  en: string;
+}
 
-  const toggleLanguage = () => {
+interface FeatureData {
+  category: LanguageText;
+  name: LanguageText;
+  description: LanguageText;
+  example: LanguageText;
+  isNew?: boolean;
+}
+
+export default function NotebookLMFeatures() {
+  const [currentLang, setCurrentLang] = useState<'zh' | 'en'>("zh");
+
+  const toggleLanguage = (): void => {
     setCurrentLang(currentLang === "zh" ? "en" : "zh");
   };
 
-  const getText = (text) => text[currentLang];
+  const getText = (text: LanguageText): string => text[currentLang];
 
-  const headerText = {
+  const headerText: LanguageText = {
     zh: "NotebookLM 完整功能列表 (2025年更新)",
     en: "Complete NotebookLM Feature List (2025 Updates)"
   };
 
-  const introText = {
+  const introText: LanguageText = {
     zh: "NotebookLM 是 Google 开发的 AI 研究工具和思考伙伴，能够分析用户上传的来源，将复杂信息转化为清晰内容，并支持各种生成式输出。",
     en: "NotebookLM is an AI research tool and thinking partner developed by Google that analyzes user-uploaded sources, transforms complex information into clear content, and supports various generative outputs."
   };
 
-  const features = [
+  const features: FeatureData[] = [
     {
       category: { zh: "核心功能", en: "Core Features" },
       name: { zh: "来源上传与分析", en: "Source Upload & Analysis" },
@@ -104,8 +117,8 @@ export default function NotebookLMFeatures() {
     }
   ];
 
-  const getCategoryIcon = (categoryName) => {
-    const icons = {
+  const getCategoryIcon = (categoryName: string): JSX.Element => {
+    const icons: Record<string, JSX.Element> = {
       "Core Features": <BookOpen className="w-5 h-5" />,
       "核心功能": <BookOpen className="w-5 h-5" />,
       "2025 New Features": <Brain className="w-5 h-5" />,
@@ -114,7 +127,7 @@ export default function NotebookLMFeatures() {
     return icons[categoryName] || <FileText className="w-5 h-5" />;
   };
 
-  const getFeatureIcon = (featureName) => {
+  const getFeatureIcon = (featureName: string): JSX.Element => {
     if (featureName.includes("音频") || featureName.includes("Audio")) {
       return <Mic className="w-4 h-4" />;
     }
@@ -130,7 +143,7 @@ export default function NotebookLMFeatures() {
     return <FileText className="w-4 h-4" />;
   };
 
-  const groupedFeatures = features.reduce((acc, feature) => {
+  const groupedFeatures = features.reduce((acc: Record<string, FeatureData[]>, feature) => {
     const category = getText(feature.category);
     if (!acc[category]) {
       acc[category] = [];
