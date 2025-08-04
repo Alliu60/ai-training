@@ -117,8 +117,8 @@ export default function NotebookLMFeatures() {
     }
   ];
 
-  const getCategoryIcon = (categoryName: string): JSX.Element => {
-    const icons: Record<string, JSX.Element> = {
+  const getCategoryIcon = (categoryName: string) => {
+    const icons: Record<string, React.ReactElement> = {
       "Core Features": <BookOpen className="w-5 h-5" />,
       "核心功能": <BookOpen className="w-5 h-5" />,
       "2025 New Features": <Brain className="w-5 h-5" />,
@@ -127,7 +127,7 @@ export default function NotebookLMFeatures() {
     return icons[categoryName] || <FileText className="w-5 h-5" />;
   };
 
-  const getFeatureIcon = (featureName: string): JSX.Element => {
+  const getFeatureIcon = (featureName: string) => {
     if (featureName.includes("音频") || featureName.includes("Audio")) {
       return <Mic className="w-4 h-4" />;
     }
