@@ -1,7 +1,7 @@
 "use client"
 
-import React, { useState } from 'react';
-import { Play, Calculator, BookOpen, Search, Mic, Heart, Globe, Users, Zap, ArrowRight, ExternalLink } from 'lucide-react';
+import React, { useState, useRef, useEffect } from 'react';
+import { Play, Calculator, BookOpen, Search, Mic, Heart, Globe, Users, Zap, ArrowRight, ExternalLink, Volume2, VolumeX, Pause } from 'lucide-react';
 
 interface LanguageText {
   zh: string;
@@ -28,6 +28,150 @@ interface FeatureData {
 
 const MicrosoftLearningAccelerators: React.FC = () => {
   const [currentLang, setCurrentLang] = useState<'zh' | 'en'>('zh');
+  const [isPlaying, setIsPlaying] = useState<boolean>(false);
+  const [isMuted, setIsMuted] = useState<boolean>(false);
+  
+  // Audio refs for different sounds
+  const backgroundMusicRef = useRef<HTMLAudioElement | null>(null);
+  const clickSoundRef = useRef<HTMLAudioElement | null>(null);
+  const hoverSoundRef = useRef<HTMLAudioElement | null>(null);
+
+  // Initialize audio on component mount
+  useEffect(() => {
+    // HTML5 Audio API - Use the Microsoft Learning Accelerators m4a file from audio folder
+    backgroundMusicRef.current = new Audio('/audio/Microsoft_AI_Learning_Accelerators.m4a');
+    backgroundMusicRef.current.loop = true;
+    backgroundMusicRef.current.volume = 0.3;
+
+    // HTML5 Audio API - Click sound effect (you can add more m4a files later)
+    clickSoundRef.current = new Audio('/audio/click-sound.m4a');
+    clickSoundRef.current.volume = 0.5;
+
+    // HTML5 Audio API - Hover sound effect (you can add more m4a files later)  
+    hoverSoundRef.current = new Audio('/audio/hover-sound.m4a');
+    hoverSoundRef.current.volume = 0.2;
+
+    // Add error handling for audio loading
+    const handleAudioError = (audioRef: HTMLAudioElement, name: string) => {
+      audioRef.addEventListener('error', (e) => {
+        console.warn(`Failed to load ${name} audio:`, e);
+      });
+      
+      // Add canplaythrough event for better user feedback
+      audioRef.addEventListener('canplaythrough', () => {
+        console.log(`${name} audio loaded successfully`);
+      });
+    };
+
+    if (backgroundMusicRef.current) {
+      handleAudioError(backgroundMusicRef.current, 'Microsoft Learning Accelerators background music');
+    }
+    if (clickSoundRef.current) {
+      handleAudioError(clickSoundRef.current, 'click sound');
+    }
+    if (hoverSoundRef.current) {
+      handleAudioError(hoverSoundRef.current, 'hover sound');
+    }
+
+    // Optional: Initialize Tone.js for advanced audio synthesis
+    initializeToneJS();
+
+    return () => {
+      // Cleanup audio on unmount
+      if (backgroundMusicRef.current) {
+        backgroundMusicRef.current.pause();
+        backgroundMusicRef.current = null;
+      }
+      if (clickSoundRef.current) {
+        clickSoundRef.current = null;
+      }
+      if (hoverSoundRef.current) {
+        hoverSoundRef.current = null;
+      }
+    };
+  }, []);
+
+  // Tone.js initialization and sound synthesis
+  const initializeToneJS = () => {
+    // Note: Uncomment to use Tone.js (requires import * as Tone from 'tone')
+    /*
+    // Create synthesizer for UI sounds
+    const synth = new Tone.Synth({
+      oscillator: {
+        type: "sine"
+      },
+      envelope: {
+        attack: 0.01,
+        decay: 0.1,
+        sustain: 0.3,
+        release: 0.5
+      }
+    }).toDestination();
+
+    // Create different tones for different actions
+    window.playToneClick = () => {
+      if (!isMuted) {
+        synth.triggerAttackRelease("C5", "8n");
+      }
+    };
+
+    window.playToneHover = () => {
+      if (!isMuted) {
+        synth.triggerAttackRelease("G4", "16n");
+      }
+    };
+
+    window.playSuccessChime = () => {
+      if (!isMuted) {
+        synth.triggerAttackRelease("C5", "8n", Tone.now());
+        synth.triggerAttackRelease("E5", "8n", Tone.now() + 0.1);
+        synth.triggerAttackRelease("G5", "8n", Tone.now() + 0.2);
+      }
+    };
+    */
+  };
+
+  // Audio control functions
+  const toggleBackgroundMusic = () => {
+    if (backgroundMusicRef.current) {
+      if (isPlaying) {
+        backgroundMusicRef.current.pause();
+        setIsPlaying(false);
+      } else {
+        backgroundMusicRef.current.play().catch(console.error);
+        setIsPlaying(true);
+      }
+    }
+  };
+
+  const toggleMute = () => {
+    const newMutedState = !isMuted;
+    setIsMuted(newMutedState);
+    
+    if (backgroundMusicRef.current) {
+      backgroundMusicRef.current.muted = newMutedState;
+    }
+    if (clickSoundRef.current) {
+      clickSoundRef.current.muted = newMutedState;
+    }
+    if (hoverSoundRef.current) {
+      hoverSoundRef.current.muted = newMutedState;
+    }
+  };
+
+  const playClickSound = () => {
+    if (clickSoundRef.current && !isMuted) {
+      clickSoundRef.current.currentTime = 0;
+      clickSoundRef.current.play().catch(console.error);
+    }
+  };
+
+  const playHoverSound = () => {
+    if (hoverSoundRef.current && !isMuted) {
+      hoverSoundRef.current.currentTime = 0;
+      hoverSoundRef.current.play().catch(console.error);
+    }
+  };
 
   const getText = (text: LanguageText): string => text[currentLang];
 
@@ -372,13 +516,65 @@ const MicrosoftLearningAccelerators: React.FC = () => {
                 {getText(heroContent.title)}
               </h1>
             </div>
-            <button
-              onClick={() => setCurrentLang(currentLang === 'zh' ? 'en' : 'zh')}
-              className="px-4 py-2 bg-blue-100 hover:bg-blue-200 rounded-lg text-blue-700 font-medium transition-colors duration-200"
-              aria-label={currentLang === 'zh' ? 'Switch to English' : '切换到中文'}
-            >
-              {currentLang === 'zh' ? 'English' : '中文'}
-            </button>
+            
+            {/* Audio Controls and Language Toggle */}
+            <div className="flex items-center space-x-3">
+              {/* Audio Controls */}
+              <div className="flex items-center space-x-2 bg-white rounded-lg p-1 shadow-sm">
+                <button
+                  onClick={() => {
+                    playClickSound();
+                    toggleBackgroundMusic();
+                  }}
+                  className={`p-2 rounded-md transition-colors duration-200 ${
+                    isPlaying 
+                      ? 'bg-green-100 text-green-700 hover:bg-green-200' 
+                      : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                  }`}
+                  aria-label={isPlaying ? 'Pause background music' : 'Play background music'}
+                  title={isPlaying ? (currentLang === 'zh' ? '暂停音乐' : 'Pause Music') : (currentLang === 'zh' ? '播放音乐' : 'Play Music')}
+                >
+                  {isPlaying ? <Pause className="w-4 h-4" /> : <Play className="w-4 h-4" />}
+                </button>
+                
+                <button
+                  onClick={() => {
+                    playClickSound();
+                    toggleMute();
+                  }}
+                  className={`p-2 rounded-md transition-colors duration-200 ${
+                    isMuted 
+                      ? 'bg-red-100 text-red-700 hover:bg-red-200' 
+                      : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                  }`}
+                  aria-label={isMuted ? 'Unmute audio' : 'Mute audio'}
+                  title={isMuted ? (currentLang === 'zh' ? '取消静音' : 'Unmute') : (currentLang === 'zh' ? '静音' : 'Mute')}
+                >
+                  {isMuted ? <VolumeX className="w-4 h-4" /> : <Volume2 className="w-4 h-4" />}
+                </button>
+                
+                {/* Audio Status Indicator */}
+                {isPlaying && (
+                  <div className="flex items-center space-x-1">
+                    <div className="w-1 h-3 bg-green-500 rounded-full animate-pulse"></div>
+                    <div className="w-1 h-2 bg-green-400 rounded-full animate-pulse" style={{ animationDelay: '0.1s' }}></div>
+                    <div className="w-1 h-3 bg-green-500 rounded-full animate-pulse" style={{ animationDelay: '0.2s' }}></div>
+                  </div>
+                )}
+              </div>
+              
+              {/* Language Toggle */}
+              <button
+                onClick={() => {
+                  playClickSound();
+                  setCurrentLang(currentLang === 'zh' ? 'en' : 'zh');
+                }}
+                className="px-4 py-2 bg-blue-100 hover:bg-blue-200 rounded-lg text-blue-700 font-medium transition-colors duration-200"
+                aria-label={currentLang === 'zh' ? 'Switch to English' : '切换到中文'}
+              >
+                {currentLang === 'zh' ? 'English' : '中文'}
+              </button>
+            </div>
           </div>
         </nav>
       </header>
@@ -422,6 +618,7 @@ const MicrosoftLearningAccelerators: React.FC = () => {
             <article 
               key={feature.id}
               className="bg-white rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden group"
+              onMouseEnter={playHoverSound}
             >
               {/* Card Header */}
               <div className={`bg-gradient-to-r ${feature.color} p-6 text-white relative`}>
@@ -477,6 +674,7 @@ const MicrosoftLearningAccelerators: React.FC = () => {
                       href={video.url}
                       target="_blank"
                       rel="noopener noreferrer"
+                      onClick={playClickSound}
                       className="flex items-center justify-between p-3 bg-red-50 hover:bg-red-100 rounded-lg transition-colors group/video"
                       aria-label={`Watch tutorial: ${getText(video.title)}`}
                     >
@@ -513,6 +711,7 @@ const MicrosoftLearningAccelerators: React.FC = () => {
             href="https://www.microsoft.com/en-us/education/products/teams"
             target="_blank"
             rel="noopener noreferrer"
+            onClick={playClickSound}
             className="inline-flex items-center px-8 py-4 bg-white text-blue-600 font-semibold rounded-xl hover:bg-gray-50 transition-colors shadow-lg"
           >
             {currentLang === 'zh' ? '访问Microsoft Teams教育版' : 'Visit Microsoft Teams for Education'}
