@@ -1,7 +1,7 @@
 "use client"
 
 import React, { useState, useRef, useEffect } from 'react';
-import { Zap, Atom, FlaskConical, RotateCcw, Network, BarChart3, Play, Globe, Award, Target, Home, CheckCircle, XCircle, Beaker, ArrowLeft, Plus, Minus, RotateCw, Calculator, Eye, Settings, Trash2, Save } from 'lucide-react';
+import { Zap, Atom, FlaskConical, RotateCcw, Network, BarChart3, Play, Globe, Award, Target, Home, CheckCircle, XCircle, Beaker, ArrowLeft, Plus, Minus, RotateCw, Calculator, Eye, Settings, Trash2, Save, Dna } from 'lucide-react';
 
 interface LanguageText {
   zh: string;
@@ -65,10 +65,10 @@ const ChemistryGameSuite: React.FC = () => {
       id: 'chiral-challenge',
       title: { zh: '手性挑战', en: 'Chiral Challenge' },
       concept: { zh: '手性、手性中心和对映异构体', en: 'Chirality, chiral centers, and enantiomers' },
-      description: { zh: '3D拼图游戏。显示分子并可在3D空间中旋转，玩家必须识别分子是否具有手性并标记手性中心。高级关卡要求判断第二个分子是否为对映异构体。', en: 'A 3D puzzle game. A molecule is displayed and can be rotated in 3D space. Players must identify if the molecule is chiral or achiral and mark chiral centers. Advanced levels ask to determine if a second molecule is an enantiomer.' },
+      description: { zh: '多关卡3D益智游戏。识别手性，标记手性中心，并比较分子对（对映体、非对映体、相同分子）。', en: 'A multi-level 3D puzzle game. Identify chirality, mark chiral centers, and compare pairs of molecules (enantiomers, diastereomers, identical).' },
       objective: { zh: '识别手性中心并理解对映异构体作为不可重叠镜像的概念', en: 'To identify chiral centers and understand enantiomers as non-superimposable mirror images' },
       difficulty: 5,
-      icon: 'rotate',
+      icon: 'dna',
       color: 'from-purple-500 to-pink-600',
       gameplay: { zh: '3D分子操作，手性中心标记，对映体识别', en: '3D molecule manipulation, chiral center marking, enantiomer identification' }
     },
@@ -76,7 +76,7 @@ const ChemistryGameSuite: React.FC = () => {
       id: 'synthesis-strategist',
       title: { zh: '合成策略师', en: 'Synthesis Strategist' },
       concept: { zh: '多步有机合成', en: 'Multi-step organic synthesis' },
-      description: { zh: '路径规划拼图游戏。给定起始分子和目标分子，玩家必须从反应库中选择正确的反应序列，为每步选择合适的试剂和条件。', en: 'A route-planning puzzle game. Players are given a starting molecule and target molecule. They must select the correct reaction sequence from a library, choosing right reagents and conditions for each step.' },
+      description: { zh: '路径规划益智游戏。给定起始分子和目标分子，从一个包含干扰项的扩展反应库中选择正确的反应序列。', en: 'A route-planning puzzle game. Given a starting and target molecule, select the correct sequence of reactions from an expanded library that includes distractors.' },
       objective: { zh: '培养规划多步合成路线的技能', en: 'To develop skills in planning multi-step synthetic routes' },
       difficulty: 5,
       icon: 'network',
@@ -87,7 +87,7 @@ const ChemistryGameSuite: React.FC = () => {
       id: 'kinetics-lab',
       title: { zh: '动力学实验室', en: 'Kinetics Lab' },
       concept: { zh: '速率方程、反应级数和速率常数', en: 'Rate equations, order of reaction, and rate constants' },
-      description: { zh: '虚拟实验室模拟，玩家设计实验确定反应的速率方程。选择一系列实验的初始反应物浓度，测量初始速率，然后用数据推导各反应物的反应级数并计算速率常数。', en: 'A virtual lab simulation where players design experiments to determine reaction rate equations. They choose initial reactant concentrations for experiments, measure initial rates, then use data to deduce reaction orders and calculate rate constants.' },
+      description: { zh: '虚拟实验室模拟，玩家为随机生成的反应设计实验。通过策略性地改变浓度来确定反应级数和速率常数。', en: 'A virtual lab simulation where players design experiments for a randomly generated reaction. Determine reaction orders and the rate constant by strategically varying concentrations.' },
       objective: { zh: '理解用初始速率法确定速率方程的方法', en: 'To understand the initial rates method for determining rate equations' },
       difficulty: 4,
       icon: 'chart',
@@ -102,7 +102,7 @@ const ChemistryGameSuite: React.FC = () => {
       case 'zap': return <Zap {...iconProps} />;
       case 'atom': return <Atom {...iconProps} />;
       case 'flask': return <FlaskConical {...iconProps} />;
-      case 'rotate': return <RotateCcw {...iconProps} />;
+      case 'dna': return <Dna {...iconProps} />;
       case 'network': return <Network {...iconProps} />;
       case 'chart': return <BarChart3 {...iconProps} />;
       default: return <Play {...iconProps} />;
@@ -200,7 +200,6 @@ const ChemistryGameSuite: React.FC = () => {
         setGameStep('measurement');
         setCurrentStep(3);
         
-        // Simulate measurement
         const anode = electrodeData.find(e => e.id === selectedAnode);
         const cathode = electrodeData.find(e => e.id === selectedCathode);
         if (anode && cathode) {
@@ -213,7 +212,6 @@ const ChemistryGameSuite: React.FC = () => {
     const handleElectronFlowPrediction = (flow: string): void => {
       setElectronFlow(flow);
       
-      // Check if correct
       const anode = electrodeData.find(e => e.id === selectedAnode);
       const cathode = electrodeData.find(e => e.id === selectedCathode);
       
@@ -240,11 +238,10 @@ const ChemistryGameSuite: React.FC = () => {
     return (
       <div className="min-h-screen bg-gradient-to-br from-yellow-900 via-orange-900 to-red-800 p-6">
         <div className="max-w-7xl mx-auto">
-          {/* Progress Indicator */}
           <div className="bg-white/10 backdrop-blur-md rounded-xl p-4 mb-6">
             <div className="flex items-center justify-between mb-4">
               <h2 className="text-2xl font-bold text-white">
-                {currentLang === 'zh' ? '电化学电池设计师' : 'Electrochemical Cell Designer'}
+                {getText({ zh: '电化学电池设计师', en: 'Electrochemical Cell Designer' })}
               </h2>
               <div className="flex items-center gap-4">
                 <button
@@ -252,10 +249,10 @@ const ChemistryGameSuite: React.FC = () => {
                   className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors"
                 >
                   <Calculator className="w-4 h-4 inline mr-2" />
-                  {currentLang === 'zh' ? '数据表' : 'Data Table'}
+                  {getText({ zh: '数据表', en: 'Data Table' })}
                 </button>
                 <div className="text-white font-semibold">
-                  {currentLang === 'zh' ? '得分' : 'Score'}: {score}
+                  {getText({ zh: '得分', en: 'Score' })}: {score}
                 </div>
               </div>
             </div>
@@ -278,26 +275,25 @@ const ChemistryGameSuite: React.FC = () => {
             </div>
             
             <div className="mt-2 text-sm text-gray-300">
-              {currentStep === 1 && (currentLang === 'zh' ? '选择电极' : 'Select Electrodes')}
-              {currentStep === 2 && (currentLang === 'zh' ? '组装电池' : 'Assemble Cell')}
-              {currentStep === 3 && (currentLang === 'zh' ? '测量与预测' : 'Measure & Predict')}
-              {currentStep === 4 && (currentLang === 'zh' ? '计算验证' : 'Calculate & Verify')}
+              {currentStep === 1 && getText({ zh: '选择电极', en: 'Select Electrodes' })}
+              {currentStep === 2 && getText({ zh: '组装电池', en: 'Assemble Cell' })}
+              {currentStep === 3 && getText({ zh: '测量与预测', en: 'Measure & Predict' })}
+              {currentStep === 4 && getText({ zh: '计算验证', en: 'Calculate & Verify' })}
             </div>
           </div>
 
           <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
-            {/* Main Game Area */}
             <div className="xl:col-span-2">
               {gameStep === 'setup' && (
                 <div className="bg-white/10 backdrop-blur-md rounded-xl p-6">
                   <h3 className="text-xl font-bold text-white mb-4">
-                    {currentLang === 'zh' ? '步骤1：选择半电池电极' : 'Step 1: Select Half-Cell Electrodes'}
+                    {getText({ zh: '步骤1：选择半电池电极', en: 'Step 1: Select Half-Cell Electrodes' })}
                   </h3>
                   
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div>
                       <h4 className="text-white font-semibold mb-3">
-                        {currentLang === 'zh' ? '阳极 (氧化)' : 'Anode (Oxidation)'}
+                        {getText({ zh: '阳极 (氧化)', en: 'Anode (Oxidation)' })}
                       </h4>
                       <div className="space-y-2 max-h-60 overflow-y-auto">
                         {electrodeData.map(electrode => (
@@ -319,7 +315,7 @@ const ChemistryGameSuite: React.FC = () => {
 
                     <div>
                       <h4 className="text-white font-semibold mb-3">
-                        {currentLang === 'zh' ? '阴极 (还原)' : 'Cathode (Reduction)'}
+                        {getText({ zh: '阴极 (还原)', en: 'Cathode (Reduction)' })}
                       </h4>
                       <div className="space-y-2 max-h-60 overflow-y-auto">
                         {electrodeData.map(electrode => (
@@ -346,7 +342,7 @@ const ChemistryGameSuite: React.FC = () => {
                     className="mt-6 w-full py-3 bg-green-600 hover:bg-green-700 disabled:bg-gray-600 
                              text-white rounded-lg font-semibold transition-colors"
                   >
-                    {currentLang === 'zh' ? '进入组装步骤' : 'Proceed to Assembly'}
+                    {getText({ zh: '进入组装步骤', en: 'Proceed to Assembly' })}
                   </button>
                 </div>
               )}
@@ -354,14 +350,11 @@ const ChemistryGameSuite: React.FC = () => {
               {gameStep === 'assembly' && (
                 <div className="bg-white/10 backdrop-blur-md rounded-xl p-6">
                   <h3 className="text-xl font-bold text-white mb-4">
-                    {currentLang === 'zh' ? '步骤2：组装电化学电池' : 'Step 2: Assemble Electrochemical Cell'}
+                    {getText({ zh: '步骤2：组装电化学电池', en: 'Step 2: Assemble Electrochemical Cell' })}
                   </h3>
-
-                  {/* Visual Cell Assembly */}
                   <div className="bg-black/20 rounded-lg p-6 mb-6">
                     <div className="flex items-center justify-center h-40">
                       <div className="grid grid-cols-5 gap-4 items-center w-full max-w-2xl">
-                        {/* Anode Beaker */}
                         <div className="text-center">
                           <div className="w-20 h-24 bg-red-600/50 border-2 border-red-400 rounded-lg mx-auto mb-2 flex items-center justify-center">
                             <div className="text-white font-bold text-sm">
@@ -371,14 +364,12 @@ const ChemistryGameSuite: React.FC = () => {
                           <div className="text-red-300 text-xs">Anode</div>
                         </div>
 
-                        {/* Wire */}
                         <div className="flex justify-center">
                           <div className={`w-8 h-1 transition-colors ${
                             assemblyComponents.wires ? 'bg-yellow-400' : 'bg-gray-600'
                           }`} />
                         </div>
 
-                        {/* Voltmeter */}
                         <div className="text-center">
                           <div className={`w-16 h-16 border-2 rounded mx-auto mb-2 flex items-center justify-center transition-colors ${
                             assemblyComponents.voltmeter 
@@ -390,14 +381,12 @@ const ChemistryGameSuite: React.FC = () => {
                           <div className="text-xs">Voltmeter</div>
                         </div>
 
-                        {/* Wire */}
                         <div className="flex justify-center">
                           <div className={`w-8 h-1 transition-colors ${
                             assemblyComponents.wires ? 'bg-yellow-400' : 'bg-gray-600'
                           }`} />
                         </div>
 
-                        {/* Cathode Beaker */}
                         <div className="text-center">
                           <div className="w-20 h-24 bg-blue-600/50 border-2 border-blue-400 rounded-lg mx-auto mb-2 flex items-center justify-center">
                             <div className="text-white font-bold text-sm">
@@ -409,7 +398,6 @@ const ChemistryGameSuite: React.FC = () => {
                       </div>
                     </div>
 
-                    {/* Salt Bridge */}
                     <div className="flex justify-center mt-4">
                       <div className={`w-32 h-3 rounded-full transition-colors ${
                         assemblyComponents.saltBridge ? 'bg-purple-500' : 'bg-gray-600'
@@ -421,7 +409,6 @@ const ChemistryGameSuite: React.FC = () => {
                     </div>
                   </div>
 
-                  {/* Assembly Controls */}
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                     {assemblyItems.map(item => (
                       <button
@@ -445,7 +432,7 @@ const ChemistryGameSuite: React.FC = () => {
                     className="mt-6 w-full py-3 bg-green-600 hover:bg-green-700 disabled:bg-gray-600 
                              text-white rounded-lg font-semibold transition-colors"
                   >
-                    {currentLang === 'zh' ? '进入测量步骤' : 'Proceed to Measurement'}
+                    {getText({ zh: '进入测量步骤', en: 'Proceed to Measurement' })}
                   </button>
                 </div>
               )}
@@ -453,14 +440,13 @@ const ChemistryGameSuite: React.FC = () => {
               {gameStep === 'measurement' && (
                 <div className="bg-white/10 backdrop-blur-md rounded-xl p-6">
                   <h3 className="text-xl font-bold text-white mb-4">
-                    {currentLang === 'zh' ? '步骤3：测量电压并预测电子流向' : 'Step 3: Measure Voltage & Predict Electron Flow'}
+                    {getText({ zh: '步骤3：测量电压并预测电子流向', en: 'Step 3: Measure Voltage & Predict Electron Flow' })}
                   </h3>
 
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    {/* Voltage Reading */}
                     <div className="text-center">
                       <h4 className="text-white font-semibold mb-4">
-                        {currentLang === 'zh' ? '电压表读数' : 'Voltmeter Reading'}
+                        {getText({ zh: '电压表读数', en: 'Voltmeter Reading' })}
                       </h4>
                       <div className="w-32 h-32 bg-black border-4 border-white rounded-full mx-auto flex items-center justify-center">
                         <div className="text-center">
@@ -472,10 +458,9 @@ const ChemistryGameSuite: React.FC = () => {
                       </div>
                     </div>
 
-                    {/* Electron Flow Prediction */}
                     <div>
                       <h4 className="text-white font-semibold mb-4">
-                        {currentLang === 'zh' ? '预测电子流向' : 'Predict Electron Flow'}
+                        {getText({ zh: '预测电子流向', en: 'Predict Electron Flow' })}
                       </h4>
                       <div className="space-y-3">
                         <button
@@ -486,7 +471,7 @@ const ChemistryGameSuite: React.FC = () => {
                               : 'border-white/30 bg-white/10 text-white hover:border-white/50'
                           }`}
                         >
-                          {currentLang === 'zh' ? '阳极 → 阴极' : 'Anode → Cathode'}
+                          {getText({ zh: '阳极 → 阴极', en: 'Anode → Cathode' })}
                         </button>
                         <button
                           onClick={() => handleElectronFlowPrediction('cathode-to-anode')}
@@ -496,7 +481,7 @@ const ChemistryGameSuite: React.FC = () => {
                               : 'border-white/30 bg-white/10 text-white hover:border-white/50'
                           }`}
                         >
-                          {currentLang === 'zh' ? '阴极 → 阳极' : 'Cathode → Anode'}
+                          {getText({ zh: '阴极 → 阳极', en: 'Cathode → Anode' })}
                         </button>
                       </div>
                     </div>
@@ -507,14 +492,13 @@ const ChemistryGameSuite: React.FC = () => {
               {gameStep === 'calculation' && (
                 <div className="bg-white/10 backdrop-blur-md rounded-xl p-6">
                   <h3 className="text-xl font-bold text-white mb-4">
-                    {currentLang === 'zh' ? '步骤4：计算验证' : 'Step 4: Calculation & Verification'}
+                    {getText({ zh: '步骤4：计算验证', en: 'Step 4: Calculation & Verification' })}
                   </h3>
 
                   <div className="space-y-6">
-                    {/* Calculation Steps */}
                     <div className="bg-black/20 rounded-lg p-4">
                       <h4 className="text-green-300 font-semibold mb-3">
-                        {currentLang === 'zh' ? '计算步骤' : 'Calculation Steps'}
+                        {getText({ zh: '计算步骤', en: 'Calculation Steps' })}
                       </h4>
                       {(() => {
                         const anode = electrodeData.find(e => e.id === selectedAnode);
@@ -529,8 +513,8 @@ const ChemistryGameSuite: React.FC = () => {
                             <div>E°cell = {cathode?.potential} - ({anode?.potential}) = {calculatedVoltage?.toFixed(2)}V</div>
                             <div className="pt-2">
                               {calculatedVoltage && calculatedVoltage > 0 
-                                ? (currentLang === 'zh' ? '反应自发进行 (ΔG < 0)' : 'Reaction is spontaneous (ΔG < 0)')
-                                : (currentLang === 'zh' ? '反应不自发 (ΔG > 0)' : 'Reaction is non-spontaneous (ΔG > 0)')
+                                ? getText({ zh: '反应自发进行 (ΔG < 0)', en: 'Reaction is spontaneous (ΔG < 0)' })
+                                : getText({ zh: '反应不自发 (ΔG > 0)', en: 'Reaction is non-spontaneous (ΔG > 0)' })
                               }
                             </div>
                           </div>
@@ -538,14 +522,13 @@ const ChemistryGameSuite: React.FC = () => {
                       })()}
                     </div>
 
-                    {/* Success Message */}
                     <div className="bg-green-500/20 border border-green-400 rounded-lg p-4 text-center">
                       <CheckCircle className="w-8 h-8 text-green-400 mx-auto mb-2" />
                       <div className="text-green-200 font-semibold">
-                        {currentLang === 'zh' ? '电池设计完成！' : 'Cell Design Complete!'}
+                        {getText({ zh: '电池设计完成！', en: 'Cell Design Complete!' })}
                       </div>
                       <div className="text-green-300 text-sm mt-1">
-                        {currentLang === 'zh' ? `获得 ${score} 分` : `Earned ${score} points`}
+                        {getText({ zh: `获得 ${score} 分`, en: `Earned ${score} points` })}
                       </div>
                     </div>
 
@@ -553,27 +536,25 @@ const ChemistryGameSuite: React.FC = () => {
                       onClick={resetGame}
                       className="w-full py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-semibold transition-colors"
                     >
-                      {currentLang === 'zh' ? '重新开始' : 'Start New Cell'}
+                      {getText({ zh: '重新开始', en: 'Start New Cell' })}
                     </button>
                   </div>
                 </div>
               )}
             </div>
 
-            {/* Side Panel */}
             <div className="space-y-6">
-              {/* Data Table */}
               {showDataTable && (
                 <div className="bg-white/10 backdrop-blur-md rounded-xl p-4">
                   <h4 className="text-white font-semibold mb-3">
-                    {currentLang === 'zh' ? '标准电极电位表' : 'Standard Electrode Potentials'}
+                    {getText({ zh: '标准电极电位表', en: 'Standard Electrode Potentials' })}
                   </h4>
                   <div className="max-h-60 overflow-y-auto">
                     <table className="w-full text-white text-sm">
                       <thead>
                         <tr className="border-b border-white/30">
                           <th className="text-left p-1">
-                            {currentLang === 'zh' ? '电极' : 'Electrode'}
+                            {getText({ zh: '电极', en: 'Electrode' })}
                           </th>
                           <th className="text-right p-1">E° (V)</th>
                         </tr>
@@ -591,23 +572,22 @@ const ChemistryGameSuite: React.FC = () => {
                 </div>
               )}
 
-              {/* Instructions */}
               <div className="bg-white/10 backdrop-blur-md rounded-xl p-4">
                 <h4 className="text-white font-semibold mb-3">
-                  {currentLang === 'zh' ? '实验步骤' : 'Experimental Steps'}
+                  {getText({ zh: '实验步骤', en: 'Experimental Steps' })}
                 </h4>
                 <div className="space-y-2 text-sm text-gray-300">
                   <div className={`p-2 rounded ${currentStep >= 1 ? 'bg-green-500/20' : 'bg-gray-600/20'}`}>
-                    1. {currentLang === 'zh' ? '选择两个不同的半电池电极' : 'Select two different half-cell electrodes'}
+                    1. {getText({ zh: '选择两个不同的半电池电极', en: 'Select two different half-cell electrodes' })}
                   </div>
                   <div className={`p-2 rounded ${currentStep >= 2 ? 'bg-green-500/20' : 'bg-gray-600/20'}`}>
-                    2. {currentLang === 'zh' ? '组装盐桥、电压表和导线' : 'Assemble salt bridge, voltmeter, and wires'}
+                    2. {getText({ zh: '组装盐桥、电压表和导线', en: 'Assemble salt bridge, voltmeter, and wires' })}
                   </div>
                   <div className={`p-2 rounded ${currentStep >= 3 ? 'bg-green-500/20' : 'bg-gray-600/20'}`}>
-                    3. {currentLang === 'zh' ? '测量电压并预测电子流向' : 'Measure voltage and predict electron flow'}
+                    3. {getText({ zh: '测量电压并预测电子流向', en: 'Measure voltage and predict electron flow' })}
                   </div>
                   <div className={`p-2 rounded ${currentStep >= 4 ? 'bg-green-500/20' : 'bg-gray-600/20'}`}>
-                    4. {currentLang === 'zh' ? '验证计算结果' : 'Verify calculation results'}
+                    4. {getText({ zh: '验证计算结果', en: 'Verify calculation results' })}
                   </div>
                 </div>
               </div>
@@ -622,7 +602,6 @@ const ChemistryGameSuite: React.FC = () => {
   const LigandSwapGame: React.FC = () => {
     const [currentLevel, setCurrentLevel] = useState<number>(0);
     const [currentComplex, setCurrentComplex] = useState<string>('cu-water');
-    const [availableLigands, setAvailableLigands] = useState<string[]>(['nh3', 'cl', 'oh']);
     const [selectedNewComplex, setSelectedNewComplex] = useState<string>('');
     const [score, setScore] = useState<number>(0);
     const [feedback, setFeedback] = useState<string>('');
@@ -630,83 +609,19 @@ const ChemistryGameSuite: React.FC = () => {
     const [predictedColor, setPredictedColor] = useState<string>('');
 
     const complexes = [
-      { 
-        id: 'cu-water', 
-        formula: '[Cu(H₂O)₆]²⁺', 
-        color: '#87CEEB', 
-        name: { zh: '六水合铜(II)离子', en: 'Hexaaquacopper(II) ion' },
-        description: { zh: '浅蓝色', en: 'Pale blue' }
-      },
-      { 
-        id: 'cu-ammonia', 
-        formula: '[Cu(NH₃)₄(H₂O)₂]²⁺', 
-        color: '#0066CC', 
-        name: { zh: '四氨合铜(II)离子', en: 'Tetraamminecopper(II) ion' },
-        description: { zh: '深蓝色', en: 'Deep blue' }
-      },
-      { 
-        id: 'cu-chloride', 
-        formula: '[CuCl₄]²⁻', 
-        color: '#228B22', 
-        name: { zh: '四氯合铜(II)离子', en: 'Tetrachlorocopper(II) ion' },
-        description: { zh: '黄绿色', en: 'Yellow-green' }
-      },
-      { 
-        id: 'cu-hydroxide', 
-        formula: '[Cu(OH)₄]²⁻', 
-        color: '#4169E1', 
-        name: { zh: '四羟基合铜(II)离子', en: 'Tetrahydroxocopper(II) ion' },
-        description: { zh: '深蓝色', en: 'Deep blue' }
-      },
-      { 
-        id: 'fe-water', 
-        formula: '[Fe(H₂O)₆]³⁺', 
-        color: '#DDA0DD', 
-        name: { zh: '六水合铁(III)离子', en: 'Hexaaquairon(III) ion' },
-        description: { zh: '淡紫色', en: 'Pale violet' }
-      },
-      { 
-        id: 'fe-thiocyanate', 
-        formula: '[Fe(SCN)(H₂O)₅]²⁺', 
-        color: '#8B0000', 
-        name: { zh: '硫氰酸合铁(III)络离子', en: 'Iron(III) thiocyanate complex' },
-        description: { zh: '血红色', en: 'Blood red' }
-      }
+      { id: 'cu-water', formula: '[Cu(H₂O)₆]²⁺', color: '#87CEEB', name: { zh: '六水合铜(II)离子', en: 'Hexaaquacopper(II) ion' }, description: { zh: '浅蓝色', en: 'Pale blue' } },
+      { id: 'cu-ammonia', formula: '[Cu(NH₃)₄(H₂O)₂]²⁺', color: '#0066CC', name: { zh: '四氨合铜(II)离子', en: 'Tetraamminecopper(II) ion' }, description: { zh: '深蓝色', en: 'Deep blue' } },
+      { id: 'cu-chloride', formula: '[CuCl₄]²⁻', color: '#228B22', name: { zh: '四氯合铜(II)离子', en: 'Tetrachlorocopper(II) ion' }, description: { zh: '黄绿色', en: 'Yellow-green' } },
+      { id: 'cu-hydroxide', formula: '[Cu(OH)₄]²⁻', color: '#4169E1', name: { zh: '四羟基合铜(II)离子', en: 'Tetrahydroxocopper(II) ion' }, description: { zh: '深蓝色', en: 'Deep blue' } },
+      { id: 'fe-water', formula: '[Fe(H₂O)₆]³⁺', color: '#DDA0DD', name: { zh: '六水合铁(III)离子', en: 'Hexaaquairon(III) ion' }, description: { zh: '淡紫色', en: 'Pale violet' } },
+      { id: 'fe-thiocyanate', formula: '[Fe(SCN)(H₂O)₅]²⁺', color: '#8B0000', name: { zh: '硫氰酸合铁(III)络离子', en: 'Iron(III) thiocyanate complex' }, description: { zh: '血红色', en: 'Blood red' } }
     ];
 
     const ligands = [
-      { 
-        id: 'nh3', 
-        formula: 'NH₃', 
-        name: { zh: '氨', en: 'Ammonia' }, 
-        color: '#10B981',
-        strength: 'strong',
-        denticity: 1
-      },
-      { 
-        id: 'cl', 
-        formula: 'Cl⁻', 
-        name: { zh: '氯离子', en: 'Chloride' }, 
-        color: '#F59E0B',
-        strength: 'weak',
-        denticity: 1
-      },
-      { 
-        id: 'oh', 
-        formula: 'OH⁻', 
-        name: { zh: '氢氧根离子', en: 'Hydroxide' }, 
-        color: '#8B5CF6',
-        strength: 'strong',
-        denticity: 1
-      },
-      { 
-        id: 'scn', 
-        formula: 'SCN⁻', 
-        name: { zh: '硫氰酸根离子', en: 'Thiocyanate' }, 
-        color: '#EF4444',
-        strength: 'medium',
-        denticity: 1
-      }
+      { id: 'nh3', formula: 'NH₃', name: { zh: '氨', en: 'Ammonia' }, color: '#10B981', strength: 'strong', denticity: 1 },
+      { id: 'cl', formula: 'Cl⁻', name: { zh: '氯离子', en: 'Chloride' }, color: '#F59E0B', strength: 'weak', denticity: 1 },
+      { id: 'oh', formula: 'OH⁻', name: { zh: '氢氧根离子', en: 'Hydroxide' }, color: '#8B5CF6', strength: 'strong', denticity: 1 },
+      { id: 'scn', formula: 'SCN⁻', name: { zh: '硫氰酸根离子', en: 'Thiocyanate' }, color: '#EF4444', strength: 'medium', denticity: 1 }
     ];
 
     const colorOptions = [
@@ -718,24 +633,9 @@ const ChemistryGameSuite: React.FC = () => {
     ];
 
     const levels = [
-      {
-        initial: 'cu-water',
-        ligand: 'nh3',
-        target: 'cu-ammonia',
-        hint: { zh: '氨是强配体，会取代水分子', en: 'Ammonia is a strong ligand that displaces water' }
-      },
-      {
-        initial: 'cu-water',
-        ligand: 'cl',
-        target: 'cu-chloride',
-        hint: { zh: '高浓度氯离子可以取代水分子', en: 'High concentration chloride can displace water' }
-      },
-      {
-        initial: 'fe-water',
-        ligand: 'scn',
-        target: 'fe-thiocyanate',
-        hint: { zh: '硫氰酸根与铁(III)形成血红色络合物', en: 'Thiocyanate forms blood red complex with Fe(III)' }
-      }
+      { initial: 'cu-water', ligand: 'nh3', target: 'cu-ammonia', hint: { zh: '氨是强配体，会取代水分子', en: 'Ammonia is a strong ligand that displaces water' } },
+      { initial: 'cu-water', ligand: 'cl', target: 'cu-chloride', hint: { zh: '高浓度氯离子可以取代水分子', en: 'High concentration chloride can displace water' } },
+      { initial: 'fe-water', ligand: 'scn', target: 'fe-thiocyanate', hint: { zh: '硫氰酸根与铁(III)形成血红色络合物', en: 'Thiocyanate forms blood red complex with Fe(III)' } }
     ];
 
     const currentLevelData = levels[currentLevel];
@@ -755,13 +655,12 @@ const ChemistryGameSuite: React.FC = () => {
     const handleColorPrediction = (colorId: string): void => {
       setPredictedColor(colorId);
       
-      // Check answers
       const targetComplex = complexes.find(c => c.id === currentLevelData.target);
       const correctColor = colorOptions.find(c => c.color === targetComplex?.color);
       
       if (selectedNewComplex === currentLevelData.target && colorId === correctColor?.id) {
         setScore(prev => prev + 200);
-        setFeedback(currentLang === 'zh' ? '完全正确！' : 'Perfect!');
+        setFeedback(getText({ zh: '完全正确！', en: 'Perfect!' }));
         setTimeout(() => {
           if (currentLevel < levels.length - 1) {
             setCurrentLevel(prev => prev + 1);
@@ -769,12 +668,13 @@ const ChemistryGameSuite: React.FC = () => {
           }
         }, 2000);
       } else {
-        setFeedback(currentLang === 'zh' ? '请重新检查答案' : 'Please check your answers');
+        setFeedback(getText({ zh: '请重新检查答案', en: 'Please check your answers' }));
       }
     };
 
     const resetLevel = (): void => {
-      const newLevel = levels[currentLevel + 1] || levels[0];
+      const newLevelIndex = currentLevel < levels.length - 1 ? currentLevel + 1 : 0;
+      const newLevel = levels[newLevelIndex];
       setCurrentComplex(newLevel.initial);
       setSelectedNewComplex('');
       setPredictedColor('');
@@ -788,31 +688,30 @@ const ChemistryGameSuite: React.FC = () => {
           <div className="bg-white/10 backdrop-blur-md rounded-xl p-6 mb-6">
             <div className="flex items-center justify-between mb-4">
               <h2 className="text-3xl font-bold text-white">
-                {currentLang === 'zh' ? '配体交换游戏' : 'Ligand Swap Game'}
+                {getText({ zh: '配体交换游戏', en: 'Ligand Swap Game' })}
               </h2>
               <div className="flex items-center gap-4">
                 <div className="text-white">
-                  {currentLang === 'zh' ? '关卡' : 'Level'}: {currentLevel + 1}/{levels.length}
+                  {getText({ zh: '关卡', en: 'Level' })}: {currentLevel + 1}/{levels.length}
                 </div>
                 <div className="text-white">
-                  {currentLang === 'zh' ? '得分' : 'Score'}: {score}
+                  {getText({ zh: '得分', en: 'Score' })}: {score}
                 </div>
               </div>
             </div>
 
             <div className="bg-blue-500/20 border border-blue-400/30 rounded-lg p-4">
               <h4 className="text-blue-300 font-semibold mb-2">
-                {currentLang === 'zh' ? '任务提示' : 'Mission Hint'}
+                {getText({ zh: '任务提示', en: 'Mission Hint' })}
               </h4>
               <p className="text-blue-200">{getText(currentLevelData.hint)}</p>
             </div>
           </div>
 
           <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
-            {/* Current Complex */}
             <div className="bg-white/10 backdrop-blur-md rounded-xl p-6">
               <h3 className="text-xl font-bold text-white mb-4 text-center">
-                {currentLang === 'zh' ? '当前络合物' : 'Current Complex'}
+                {getText({ zh: '当前络合物', en: 'Current Complex' })}
               </h3>
               
               <div className="text-center mb-6">
@@ -830,9 +729,8 @@ const ChemistryGameSuite: React.FC = () => {
                 </p>
               </div>
 
-              {/* Available Ligands */}
               <h4 className="text-white font-semibold mb-3">
-                {currentLang === 'zh' ? '添加配体' : 'Add Ligand'}
+                {getText({ zh: '添加配体', en: 'Add Ligand' })}
               </h4>
               <div className="space-y-3">
                 {ligands.map(ligand => (
@@ -848,8 +746,8 @@ const ChemistryGameSuite: React.FC = () => {
                         <div className="text-sm">{getText(ligand.name)}</div>
                       </div>
                       <div className="text-xs">
-                        <div>{currentLang === 'zh' ? '强度' : 'Strength'}: {ligand.strength}</div>
-                        <div>{currentLang === 'zh' ? '齿数' : 'Denticity'}: {ligand.denticity}</div>
+                        <div>{getText({ zh: '强度', en: 'Strength' })}: {ligand.strength}</div>
+                        <div>{getText({ zh: '齿数', en: 'Denticity' })}: {ligand.denticity}</div>
                       </div>
                     </div>
                   </button>
@@ -857,10 +755,9 @@ const ChemistryGameSuite: React.FC = () => {
               </div>
             </div>
 
-            {/* Complex Selection */}
             <div className="bg-white/10 backdrop-blur-md rounded-xl p-6">
               <h3 className="text-xl font-bold text-white mb-4 text-center">
-                {currentLang === 'zh' ? '选择新络合物' : 'Select New Complex'}
+                {getText({ zh: '选择新络合物', en: 'Select New Complex' })}
               </h3>
 
               <div className="space-y-3 max-h-96 overflow-y-auto">
@@ -890,16 +787,15 @@ const ChemistryGameSuite: React.FC = () => {
               </div>
             </div>
 
-            {/* Color Prediction */}
             <div className="bg-white/10 backdrop-blur-md rounded-xl p-6">
               <h3 className="text-xl font-bold text-white mb-4 text-center">
-                {currentLang === 'zh' ? '预测颜色变化' : 'Predict Color Change'}
+                {getText({ zh: '预测颜色变化', en: 'Predict Color Change' })}
               </h3>
 
               {showColorPicker ? (
                 <div className="space-y-3">
                   <p className="text-white text-center mb-4">
-                    {currentLang === 'zh' ? '新络合物的颜色是什么？' : 'What color is the new complex?'}
+                    {getText({ zh: '新络合物的颜色是什么？', en: 'What color is the new complex?' })}
                   </p>
                   
                   {colorOptions.map(color => (
@@ -925,28 +821,26 @@ const ChemistryGameSuite: React.FC = () => {
               ) : (
                 <div className="text-center text-gray-400 py-8">
                   <Beaker className="w-16 h-16 mx-auto mb-4 opacity-50" />
-                  <p>{currentLang === 'zh' ? '请先添加配体' : 'Please add a ligand first'}</p>
+                  <p>{getText({ zh: '请先添加配体', en: 'Please add a ligand first' })}</p>
                 </div>
               )}
 
-              {/* Ligand Strength Chart */}
               <div className="mt-6 p-4 bg-black/20 rounded-lg">
                 <h4 className="text-white font-semibold mb-3">
-                  {currentLang === 'zh' ? '配体强度序列' : 'Ligand Strength Series'}
+                  {getText({ zh: '配体强度序列', en: 'Ligand Strength Series' })}
                 </h4>
                 <div className="text-sm text-gray-300">
                   <div className="font-mono">
                     I⁻ &lt; Br⁻ &lt; Cl⁻ &lt; F⁻ &lt; H₂O &lt; NH₃ &lt; NO₂⁻ &lt; CN⁻
                   </div>
                   <div className="mt-2 text-xs">
-                    {currentLang === 'zh' ? '强配体能取代弱配体' : 'Strong ligands can displace weak ligands'}
+                    {getText({ zh: '强配体能取代弱配体', en: 'Strong ligands can displace weak ligands' })}
                   </div>
                 </div>
               </div>
             </div>
           </div>
 
-          {/* Feedback */}
           {feedback && (
             <div className={`mt-6 p-4 rounded-lg text-center font-semibold ${
               feedback.includes('正确') || feedback.includes('Perfect')
@@ -980,42 +874,10 @@ const ChemistryGameSuite: React.FC = () => {
     const [currentStep, setCurrentStep] = useState<number>(1);
 
     const bufferSystems = [
-      {
-        id: 'acetate',
-        name: { zh: '醋酸/醋酸钠缓冲液', en: 'Acetate Buffer (CH₃COOH/CH₃COO⁻)' },
-        weakAcid: 'CH₃COOH',
-        conjugateBase: 'CH₃COO⁻',
-        pKa: 4.74,
-        effectiveRange: [3.74, 5.74],
-        description: { zh: '最常用的缓冲系统，pKa = 4.74', en: 'Most common buffer system, pKa = 4.74' }
-      },
-      {
-        id: 'phosphate',
-        name: { zh: '磷酸氢盐缓冲液', en: 'Phosphate Buffer (H₂PO₄⁻/HPO₄²⁻)' },
-        weakAcid: 'H₂PO₄⁻',
-        conjugateBase: 'HPO₄²⁻',
-        pKa: 7.21,
-        effectiveRange: [6.21, 8.21],
-        description: { zh: '生理pH缓冲系统，pKa = 7.21', en: 'Physiological pH buffer system, pKa = 7.21' }
-      },
-      {
-        id: 'carbonate',
-        name: { zh: '碳酸氢盐缓冲液', en: 'Carbonate Buffer (H₂CO₃/HCO₃⁻)' },
-        weakAcid: 'H₂CO₃',
-        conjugateBase: 'HCO₃⁻',
-        pKa: 6.35,
-        effectiveRange: [5.35, 7.35],
-        description: { zh: '血液缓冲系统，pKa = 6.35', en: 'Blood buffer system, pKa = 6.35' }
-      },
-      {
-        id: 'tris',
-        name: { zh: 'Tris缓冲液', en: 'Tris Buffer (Tris-H⁺/Tris)' },
-        weakAcid: 'Tris-H⁺',
-        conjugateBase: 'Tris',
-        pKa: 8.07,
-        effectiveRange: [7.07, 9.07],
-        description: { zh: '生化实验常用，pKa = 8.07', en: 'Common in biochemistry, pKa = 8.07' }
-      }
+      { id: 'acetate', name: { zh: '醋酸/醋酸钠缓冲液', en: 'Acetate Buffer (CH₃COOH/CH₃COO⁻)' }, weakAcid: 'CH₃COOH', conjugateBase: 'CH₃COO⁻', pKa: 4.74, effectiveRange: [3.74, 5.74], description: { zh: '最常用的缓冲系统，pKa = 4.74', en: 'Most common buffer system, pKa = 4.74' } },
+      { id: 'phosphate', name: { zh: '磷酸氢盐缓冲液', en: 'Phosphate Buffer (H₂PO₄⁻/HPO₄²⁻)' }, weakAcid: 'H₂PO₄⁻', conjugateBase: 'HPO₄²⁻', pKa: 7.21, effectiveRange: [6.21, 8.21], description: { zh: '生理pH缓冲系统，pKa = 7.21', en: 'Physiological pH buffer system, pKa = 7.21' } },
+      { id: 'carbonate', name: { zh: '碳酸氢盐缓冲液', en: 'Carbonate Buffer (H₂CO₃/HCO₃⁻)' }, weakAcid: 'H₂CO₃', conjugateBase: 'HCO₃⁻', pKa: 6.35, effectiveRange: [5.35, 7.35], description: { zh: '血液缓冲系统，pKa = 6.35', en: 'Blood buffer system, pKa = 6.35' } },
+      { id: 'tris', name: { zh: 'Tris缓冲液', en: 'Tris Buffer (Tris-H⁺/Tris)' }, weakAcid: 'Tris-H⁺', conjugateBase: 'Tris', pKa: 8.07, effectiveRange: [7.07, 9.07], description: { zh: '生化实验常用，pKa = 8.07', en: 'Common in biochemistry, pKa = 8.07' } }
     ];
 
     const reagents = [
@@ -1030,7 +892,6 @@ const ChemistryGameSuite: React.FC = () => {
     const calculateBufferPH = (acidConc: number, baseConc: number, pKa: number): number => {
       if (baseConc <= 0) return 0;
       if (acidConc <= 0) return 14;
-      // Henderson-Hasselbalch equation: pH = pKa + log([A⁻]/[HA])
       return pKa + Math.log10(baseConc / acidConc);
     };
 
@@ -1038,7 +899,7 @@ const ChemistryGameSuite: React.FC = () => {
       setSelectedBuffer(bufferId);
       const buffer = bufferSystems.find(b => b.id === bufferId);
       if (buffer) {
-        setTargetPH(buffer.pKa); // Start with pKa as target
+        setTargetPH(buffer.pKa);
         setCurrentPH(calculateBufferPH(0.1, 0.1, buffer.pKa));
       }
     };
@@ -1070,19 +931,17 @@ const ChemistryGameSuite: React.FC = () => {
       const reagent = reagents.find(r => r.id === reagentId);
       if (!reagent || !selectedBufferData) return;
 
-      const totalVolume = 100; // Assume 100mL initial buffer solution
-      const moles = reagent.strength * (volume / 1000); // Convert mL to L
+      const totalVolume = 100;
+      const moles = reagent.strength * (volume / 1000);
 
       let newAcidConc = bufferConcentration.acid;
       let newBaseConc = bufferConcentration.base;
 
       if (reagent.type === 'strong-acid') {
-        // Strong acid converts conjugate base to weak acid
         newBaseConc = Math.max(0, newBaseConc - moles / (totalVolume / 1000));
         newAcidConc = newAcidConc + moles / (totalVolume / 1000);
         setAddedAcid(prev => prev + volume);
       } else if (reagent.type === 'strong-base') {
-        // Strong base converts weak acid to conjugate base
         newAcidConc = Math.max(0, newAcidConc - moles / (totalVolume / 1000));
         newBaseConc = newBaseConc + moles / (totalVolume / 1000);
         setAddedBase(prev => prev + volume);
@@ -1092,14 +951,12 @@ const ChemistryGameSuite: React.FC = () => {
       const newPH = calculateBufferPH(newAcidConc, newBaseConc, selectedBufferData.pKa);
       setCurrentPH(newPH);
 
-      // Add to history
       setPhHistory(prev => [...prev, {
         time: prev.length,
         ph: newPH,
         added: `${volume}mL ${reagent.name}`
       }]);
 
-      // Check if target reached
       if (Math.abs(newPH - targetPH) < 0.05) {
         setScore(prev => prev + 150);
         setGamePhase('calculation');
@@ -1140,11 +997,10 @@ const ChemistryGameSuite: React.FC = () => {
     return (
       <div className="min-h-screen bg-gradient-to-br from-green-900 via-teal-900 to-blue-800 p-6">
         <div className="max-w-7xl mx-auto">
-          {/* Progress Header */}
           <div className="bg-white/10 backdrop-blur-md rounded-xl p-4 mb-6">
             <div className="flex items-center justify-between mb-4">
               <h2 className="text-2xl font-bold text-white">
-                {currentLang === 'zh' ? 'pH平衡器 - 缓冲溶液实验室' : 'pH Balancer - Buffer Solution Lab'}
+                {getText({ zh: 'pH平衡器 - 缓冲溶液实验室', en: 'pH Balancer - Buffer Solution Lab' })}
               </h2>
               <div className="flex items-center gap-4">
                 <button
@@ -1152,15 +1008,14 @@ const ChemistryGameSuite: React.FC = () => {
                   className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors"
                 >
                   <Calculator className="w-4 h-4 inline mr-2" />
-                  {currentLang === 'zh' ? '计算公式' : 'Calculations'}
+                  {getText({ zh: '计算公式', en: 'Calculations' })}
                 </button>
                 <div className="text-white font-semibold">
-                  {currentLang === 'zh' ? '得分' : 'Score'}: {score}
+                  {getText({ zh: '得分', en: 'Score' })}: {score}
                 </div>
               </div>
             </div>
             
-            {/* Progress Steps */}
             <div className="flex items-center gap-4">
               {[1, 2, 3, 4].map(step => (
                 <div key={step} className={`flex items-center ${step < 4 ? 'flex-1' : ''}`}>
@@ -1179,20 +1034,19 @@ const ChemistryGameSuite: React.FC = () => {
             </div>
             
             <div className="mt-2 text-sm text-gray-300">
-              {currentStep === 1 && (currentLang === 'zh' ? '选择缓冲系统' : 'Select Buffer System')}
-              {currentStep === 2 && (currentLang === 'zh' ? '配制缓冲溶液' : 'Prepare Buffer Solution')}
-              {currentStep === 3 && (currentLang === 'zh' ? '调节pH值' : 'Adjust pH Value')}
-              {currentStep === 4 && (currentLang === 'zh' ? '计算分析' : 'Calculate & Analyze')}
+              {currentStep === 1 && getText({ zh: '选择缓冲系统', en: 'Select Buffer System' })}
+              {currentStep === 2 && getText({ zh: '配制缓冲溶液', en: 'Prepare Buffer Solution' })}
+              {currentStep === 3 && getText({ zh: '调节pH值', en: 'Adjust pH Value' })}
+              {currentStep === 4 && getText({ zh: '计算分析', en: 'Calculate & Analyze' })}
             </div>
           </div>
 
           <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
-            {/* Main Experiment Area */}
             <div className="xl:col-span-2">
               {gamePhase === 'preparation' && (
                 <div className="bg-white/10 backdrop-blur-md rounded-xl p-6">
                   <h3 className="text-xl font-bold text-white mb-4">
-                    {currentLang === 'zh' ? '步骤1：选择缓冲系统' : 'Step 1: Select Buffer System'}
+                    {getText({ zh: '步骤1：选择缓冲系统', en: 'Step 1: Select Buffer System' })}
                   </h3>
                   
                   <div className="space-y-4">
@@ -1222,13 +1076,13 @@ const ChemistryGameSuite: React.FC = () => {
                         <div className="grid grid-cols-2 gap-4 text-sm">
                           <div className="bg-red-500/20 border border-red-400/30 rounded p-2">
                             <span className="text-red-300 font-semibold">
-                              {currentLang === 'zh' ? '弱酸' : 'Weak Acid'}: 
+                              {getText({ zh: '弱酸', en: 'Weak Acid' })}: 
                             </span>
                             <span className="text-white ml-1">{buffer.weakAcid}</span>
                           </div>
                           <div className="bg-blue-500/20 border border-blue-400/30 rounded p-2">
                             <span className="text-blue-300 font-semibold">
-                              {currentLang === 'zh' ? '共轭碱' : 'Conjugate Base'}: 
+                              {getText({ zh: '共轭碱', en: 'Conjugate Base' })}: 
                             </span>
                             <span className="text-white ml-1">{buffer.conjugateBase}</span>
                           </div>
@@ -1243,7 +1097,7 @@ const ChemistryGameSuite: React.FC = () => {
                     className="mt-6 w-full py-3 bg-green-600 hover:bg-green-700 disabled:bg-gray-600 
                              text-white rounded-lg font-semibold transition-colors"
                   >
-                    {currentLang === 'zh' ? '进入配制步骤' : 'Proceed to Buffer Preparation'}
+                    {getText({ zh: '进入配制步骤', en: 'Proceed to Buffer Preparation' })}
                   </button>
                 </div>
               )}
@@ -1251,14 +1105,13 @@ const ChemistryGameSuite: React.FC = () => {
               {gamePhase === 'buffer-setup' && selectedBufferData && (
                 <div className="bg-white/10 backdrop-blur-md rounded-xl p-6">
                   <h3 className="text-xl font-bold text-white mb-4">
-                    {currentLang === 'zh' ? '步骤2：配制缓冲溶液' : 'Step 2: Prepare Buffer Solution'}
+                    {getText({ zh: '步骤2：配制缓冲溶液', en: 'Step 2: Prepare Buffer Solution' })}
                   </h3>
 
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    {/* Concentration Controls */}
                     <div>
                       <h4 className="text-white font-semibold mb-4">
-                        {currentLang === 'zh' ? '调节浓度 (mol/L)' : 'Adjust Concentrations (mol/L)'}
+                        {getText({ zh: '调节浓度 (mol/L)', en: 'Adjust Concentrations (mol/L)' })}
                       </h4>
                       
                       <div className="space-y-4">
@@ -1295,22 +1148,21 @@ const ChemistryGameSuite: React.FC = () => {
 
                       <div className="mt-4 p-4 bg-yellow-500/20 border border-yellow-400/30 rounded">
                         <h5 className="text-yellow-300 font-semibold mb-2">
-                          {currentLang === 'zh' ? '目标pH' : 'Target pH'}
+                          {getText({ zh: '目标pH', en: 'Target pH' })}
                         </h5>
                         <div className="text-yellow-200 text-2xl font-bold">{targetPH}</div>
                         <button
                           onClick={setNewTarget}
                           className="mt-2 px-3 py-1 bg-yellow-600 hover:bg-yellow-700 text-white rounded text-sm"
                         >
-                          {currentLang === 'zh' ? '新目标' : 'New Target'}
+                          {getText({ zh: '新目标', en: 'New Target' })}
                         </button>
                       </div>
                     </div>
 
-                    {/* pH Visualization */}
                     <div className="text-center">
                       <h4 className="text-white font-semibold mb-4">
-                        {currentLang === 'zh' ? '当前pH值' : 'Current pH'}
+                        {getText({ zh: '当前pH值', en: 'Current pH' })}
                       </h4>
                       
                       <div className="relative w-48 h-48 mx-auto">
@@ -1321,7 +1173,6 @@ const ChemistryGameSuite: React.FC = () => {
                           {currentPH.toFixed(2)}
                         </div>
                         
-                        {/* pH Scale */}
                         <div className="absolute -bottom-8 left-0 right-0">
                           <div className="flex justify-between text-xs text-gray-300">
                             <span>0</span>
@@ -1332,7 +1183,6 @@ const ChemistryGameSuite: React.FC = () => {
                         </div>
                       </div>
 
-                      {/* Henderson-Hasselbalch Preview */}
                       <div className="mt-6 p-3 bg-black/20 rounded font-mono text-sm">
                         <div className="text-green-300">pH = pKa + log([A⁻]/[HA])</div>
                         <div className="text-white">
@@ -1347,22 +1197,21 @@ const ChemistryGameSuite: React.FC = () => {
                     onClick={proceedToTesting}
                     className="mt-6 w-full py-3 bg-green-600 hover:bg-green-700 text-white rounded-lg font-semibold transition-colors"
                   >
-                    {currentLang === 'zh' ? '开始pH调节' : 'Start pH Adjustment'}
+                    {getText({ zh: '开始pH调节', en: 'Start pH Adjustment' })}
                   </button>
                 </div>
               )}
 
-              {gamePhase === 'testing' && (
+              {gamePhase === 'testing' && selectedBufferData && (
                 <div className="bg-white/10 backdrop-blur-md rounded-xl p-6">
                   <h3 className="text-xl font-bold text-white mb-4">
-                    {currentLang === 'zh' ? '步骤3：精确调节pH值' : 'Step 3: Fine-tune pH Value'}
+                    {getText({ zh: '步骤3：精确调节pH值', en: 'Step 3: Fine-tune pH Value' })}
                   </h3>
 
                   <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                    {/* Reagent Addition */}
                     <div>
                       <h4 className="text-white font-semibold mb-4">
-                        {currentLang === 'zh' ? '添加试剂' : 'Add Reagents'}
+                        {getText({ zh: '添加试剂', en: 'Add Reagents' })}
                       </h4>
                       
                       <div className="space-y-4">
@@ -1374,8 +1223,8 @@ const ChemistryGameSuite: React.FC = () => {
                                 reagent.type === 'strong-acid' ? 'bg-red-500/20 text-red-300' : 'bg-blue-500/20 text-blue-300'
                               }`}>
                                 {reagent.type === 'strong-acid' ? 
-                                  (currentLang === 'zh' ? '强酸' : 'Strong Acid') : 
-                                  (currentLang === 'zh' ? '强碱' : 'Strong Base')
+                                  getText({ zh: '强酸', en: 'Strong Acid' }) : 
+                                  getText({ zh: '强碱', en: 'Strong Base' })
                                 }
                               </span>
                             </div>
@@ -1402,23 +1251,22 @@ const ChemistryGameSuite: React.FC = () => {
                       <div className="mt-4 grid grid-cols-2 gap-4 text-sm">
                         <div className="bg-red-500/20 border border-red-400/30 rounded p-3 text-center">
                           <div className="text-red-300 font-semibold">
-                            {currentLang === 'zh' ? '已加酸' : 'Acid Added'}
+                            {getText({ zh: '已加酸', en: 'Acid Added' })}
                           </div>
                           <div className="text-white text-lg">{addedAcid.toFixed(1)} mL</div>
                         </div>
                         <div className="bg-blue-500/20 border border-blue-400/30 rounded p-3 text-center">
                           <div className="text-blue-300 font-semibold">
-                            {currentLang === 'zh' ? '已加碱' : 'Base Added'}
+                            {getText({ zh: '已加碱', en: 'Base Added' })}
                           </div>
                           <div className="text-white text-lg">{addedBase.toFixed(1)} mL</div>
                         </div>
                       </div>
                     </div>
 
-                    {/* Real-time Monitoring */}
                     <div>
                       <h4 className="text-white font-semibold mb-4">
-                        {currentLang === 'zh' ? '实时监控' : 'Real-time Monitoring'}
+                        {getText({ zh: '实时监控', en: 'Real-time Monitoring' })}
                       </h4>
                       
                       <div className="text-center mb-6">
@@ -1429,24 +1277,23 @@ const ChemistryGameSuite: React.FC = () => {
                           {currentPH.toFixed(2)}
                         </div>
                         <div className="mt-2 text-gray-300">
-                          {currentLang === 'zh' ? '当前pH' : 'Current pH'}
+                          {getText({ zh: '当前pH', en: 'Current pH' })}
                         </div>
                       </div>
 
                       <div className="bg-yellow-500/20 border border-yellow-400/30 rounded p-3 text-center mb-4">
                         <div className="text-yellow-300 font-semibold">
-                          {currentLang === 'zh' ? '目标pH' : 'Target pH'}
+                          {getText({ zh: '目标pH', en: 'Target pH' })}
                         </div>
                         <div className="text-yellow-200 text-xl">{targetPH}</div>
                         <div className="text-yellow-400 text-sm">
-                          {currentLang === 'zh' ? '差值' : 'Difference'}: {Math.abs(currentPH - targetPH).toFixed(2)}
+                          {getText({ zh: '差值', en: 'Difference' })}: {Math.abs(currentPH - targetPH).toFixed(2)}
                         </div>
                       </div>
 
-                      {/* pH History Chart */}
                       <div className="bg-black/20 rounded p-3">
                         <h5 className="text-white font-semibold mb-2">
-                          {currentLang === 'zh' ? 'pH变化历史' : 'pH Change History'}
+                          {getText({ zh: 'pH变化历史', en: 'pH Change History' })}
                         </h5>
                         <div className="max-h-32 overflow-y-auto space-y-1 text-xs">
                           {phHistory.map((entry, index) => (
@@ -1467,26 +1314,24 @@ const ChemistryGameSuite: React.FC = () => {
               {gamePhase === 'calculation' && selectedBufferData && (
                 <div className="bg-white/10 backdrop-blur-md rounded-xl p-6">
                   <h3 className="text-xl font-bold text-white mb-4">
-                    {currentLang === 'zh' ? '步骤4：计算分析' : 'Step 4: Calculation & Analysis'}
+                    {getText({ zh: '步骤4：计算分析', en: 'Step 4: Calculation & Analysis' })}
                   </h3>
 
                   <div className="space-y-6">
-                    {/* Success Message */}
                     <div className="bg-green-500/20 border border-green-400 rounded-lg p-4 text-center">
                       <CheckCircle className="w-8 h-8 text-green-400 mx-auto mb-2" />
                       <div className="text-green-200 font-semibold">
-                        {currentLang === 'zh' ? '成功达到目标pH！' : 'Successfully reached target pH!'}
+                        {getText({ zh: '成功达到目标pH！', en: 'Successfully reached target pH!' })}
                       </div>
                       <div className="text-green-300 text-sm">
-                        {currentLang === 'zh' ? '最终pH' : 'Final pH'}: {currentPH.toFixed(2)} 
-                        {currentLang === 'zh' ? '（目标：' : ' (Target: '}{targetPH}{currentLang === 'zh' ? '）' : ')'}
+                        {getText({ zh: '最终pH', en: 'Final pH' })}: {currentPH.toFixed(2)} 
+                        {getText({ zh: '（目标：', en: ' (Target: ' })}{targetPH}{getText({ zh: '）', en: ')' })}
                       </div>
                     </div>
 
-                    {/* Detailed Calculations */}
                     <div className="bg-black/20 rounded-lg p-4">
                       <h4 className="text-cyan-300 font-semibold mb-3">
-                        {currentLang === 'zh' ? 'Henderson-Hasselbalch方程计算' : 'Henderson-Hasselbalch Equation Calculation'}
+                        {getText({ zh: 'Henderson-Hasselbalch方程计算', en: 'Henderson-Hasselbalch Equation Calculation' })}
                       </h4>
                       <div className="font-mono text-white space-y-2">
                         <div>pH = pKa + log([A⁻]/[HA])</div>
@@ -1497,27 +1342,26 @@ const ChemistryGameSuite: React.FC = () => {
                       </div>
                     </div>
 
-                    {/* Buffer Capacity Analysis */}
                     <div className="bg-purple-500/20 border border-purple-400/30 rounded-lg p-4">
                       <h4 className="text-purple-300 font-semibold mb-3">
-                        {currentLang === 'zh' ? '缓冲容量分析' : 'Buffer Capacity Analysis'}
+                        {getText({ zh: '缓冲容量分析', en: 'Buffer Capacity Analysis' })}
                       </h4>
                       <div className="text-purple-200 text-sm space-y-2">
                         <div>
-                          {currentLang === 'zh' ? '添加的强酸：' : 'Strong acid added: '}{addedAcid.toFixed(1)} mL
+                          {getText({ zh: '添加的强酸：', en: 'Strong acid added: ' })}{addedAcid.toFixed(1)} mL
                         </div>
                         <div>
-                          {currentLang === 'zh' ? '添加的强碱：' : 'Strong base added: '}{addedBase.toFixed(1)} mL
+                          {getText({ zh: '添加的强碱：', en: 'Strong base added: ' })}{addedBase.toFixed(1)} mL
                         </div>
                         <div>
-                          {currentLang === 'zh' ? 'pH变化幅度：' : 'pH change range: '}
+                          {getText({ zh: 'pH变化幅度：', en: 'pH change range: ' })}
                           {phHistory.length > 1 ? 
                             `${Math.min(...phHistory.map(h => h.ph)).toFixed(2)} - ${Math.max(...phHistory.map(h => h.ph)).toFixed(2)}` :
                             'N/A'
                           }
                         </div>
                         <div className="text-purple-300 font-semibold">
-                          {currentLang === 'zh' ? '缓冲效果：优秀' : 'Buffer Performance: Excellent'}
+                          {getText({ zh: '缓冲效果：优秀', en: 'Buffer Performance: Excellent' })}
                         </div>
                       </div>
                     </div>
@@ -1527,13 +1371,13 @@ const ChemistryGameSuite: React.FC = () => {
                         onClick={resetExperiment}
                         className="flex-1 py-3 bg-gray-600 hover:bg-gray-700 text-white rounded-lg font-semibold transition-colors"
                       >
-                        {currentLang === 'zh' ? '重新实验' : 'New Experiment'}
+                        {getText({ zh: '重新实验', en: 'New Experiment' })}
                       </button>
                       <button
                         onClick={() => setGamePhase('testing')}
                         className="flex-1 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-semibold transition-colors"
                       >
-                        {currentLang === 'zh' ? '继续调节' : 'Continue Adjusting'}
+                        {getText({ zh: '继续调节', en: 'Continue Adjusting' })}
                       </button>
                     </div>
                   </div>
@@ -1541,13 +1385,11 @@ const ChemistryGameSuite: React.FC = () => {
               )}
             </div>
 
-            {/* Side Panel */}
             <div className="space-y-6">
-              {/* Calculations Panel */}
               {showCalculations && (
                 <div className="bg-white/10 backdrop-blur-md rounded-xl p-4">
                   <h4 className="text-white font-semibold mb-3">
-                    {currentLang === 'zh' ? '缓冲溶液理论' : 'Buffer Solution Theory'}
+                    {getText({ zh: '缓冲溶液理论', en: 'Buffer Solution Theory' })}
                   </h4>
                   
                   <div className="space-y-4 text-sm">
@@ -1560,7 +1402,7 @@ const ChemistryGameSuite: React.FC = () => {
 
                     <div className="bg-green-500/20 border border-green-400/30 rounded p-3">
                       <h5 className="text-green-300 font-semibold mb-2">
-                        {currentLang === 'zh' ? '缓冲范围' : 'Buffer Range'}
+                        {getText({ zh: '缓冲范围', en: 'Buffer Range' })}
                       </h5>
                       <div className="text-green-200">
                         pH = pKa ± 1
@@ -1569,7 +1411,7 @@ const ChemistryGameSuite: React.FC = () => {
 
                     <div className="bg-yellow-500/20 border border-yellow-400/30 rounded p-3">
                       <h5 className="text-yellow-300 font-semibold mb-2">
-                        {currentLang === 'zh' ? '最佳缓冲比' : 'Optimal Buffer Ratio'}
+                        {getText({ zh: '最佳缓冲比', en: 'Optimal Buffer Ratio' })}
                       </h5>
                       <div className="text-yellow-200">
                         [A⁻]/[HA] = 0.1 - 10
@@ -1579,17 +1421,16 @@ const ChemistryGameSuite: React.FC = () => {
                 </div>
               )}
 
-              {/* Buffer Information */}
               {selectedBufferData && (
                 <div className="bg-white/10 backdrop-blur-md rounded-xl p-4">
                   <h4 className="text-white font-semibold mb-3">
-                    {currentLang === 'zh' ? '缓冲系统信息' : 'Buffer System Info'}
+                    {getText({ zh: '缓冲系统信息', en: 'Buffer System Info' })}
                   </h4>
                   
                   <div className="space-y-3 text-sm">
                     <div>
                       <span className="text-gray-300">
-                        {currentLang === 'zh' ? '系统名称：' : 'System: '}
+                        {getText({ zh: '系统名称：', en: 'System: ' })}
                       </span>
                       <span className="text-white">{getText(selectedBufferData.name)}</span>
                     </div>
@@ -1601,7 +1442,7 @@ const ChemistryGameSuite: React.FC = () => {
                     
                     <div>
                       <span className="text-gray-300">
-                        {currentLang === 'zh' ? '有效范围：' : 'Effective Range: '}
+                        {getText({ zh: '有效范围：', en: 'Effective Range: ' })}
                       </span>
                       <span className="text-green-300">
                         {selectedBufferData.effectiveRange[0]} - {selectedBufferData.effectiveRange[1]}
@@ -1610,38 +1451,37 @@ const ChemistryGameSuite: React.FC = () => {
 
                     <div className="pt-2 border-t border-white/20">
                       <div className="text-red-300">
-                        {currentLang === 'zh' ? '弱酸：' : 'Weak Acid: '}{selectedBufferData.weakAcid}
+                        {getText({ zh: '弱酸：', en: 'Weak Acid: ' })}{selectedBufferData.weakAcid}
                       </div>
                       <div className="text-blue-300">
-                        {currentLang === 'zh' ? '共轭碱：' : 'Conjugate Base: '}{selectedBufferData.conjugateBase}
+                        {getText({ zh: '共轭碱：', en: 'Conjugate Base: ' })}{selectedBufferData.conjugateBase}
                       </div>
                     </div>
                   </div>
                 </div>
               )}
 
-              {/* Quick Tips */}
               <div className="bg-white/10 backdrop-blur-md rounded-xl p-4">
                 <h4 className="text-white font-semibold mb-3">
-                  {currentLang === 'zh' ? '实验技巧' : 'Experimental Tips'}
+                  {getText({ zh: '实验技巧', en: 'Experimental Tips' })}
                 </h4>
                 
                 <div className="space-y-2 text-sm text-gray-300">
                   <div className="flex items-start gap-2">
                     <span className="text-yellow-400">•</span>
-                    <span>{currentLang === 'zh' ? '选择pKa接近目标pH的缓冲系统' : 'Choose buffer system with pKa close to target pH'}</span>
+                    <span>{getText({ zh: '选择pKa接近目标pH的缓冲系统', en: 'Choose buffer system with pKa close to target pH' })}</span>
                   </div>
                   <div className="flex items-start gap-2">
                     <span className="text-yellow-400">•</span>
-                    <span>{currentLang === 'zh' ? '少量多次添加试剂以精确控制' : 'Add reagents in small increments for precise control'}</span>
+                    <span>{getText({ zh: '少量多次添加试剂以精确控制', en: 'Add reagents in small increments for precise control' })}</span>
                   </div>
                   <div className="flex items-start gap-2">
                     <span className="text-yellow-400">•</span>
-                    <span>{currentLang === 'zh' ? '观察缓冲容量的抗酸碱能力' : 'Observe buffer capacity against acids and bases'}</span>
+                    <span>{getText({ zh: '观察缓冲容量的抗酸碱能力', en: 'Observe buffer capacity against acids and bases' })}</span>
                   </div>
                   <div className="flex items-start gap-2">
                     <span className="text-yellow-400">•</span>
-                    <span>{currentLang === 'zh' ? '使用Henderson-Hasselbalch方程验证结果' : 'Use Henderson-Hasselbalch equation to verify results'}</span>
+                    <span>{getText({ zh: '使用Henderson-Hasselbalch方程验证结果', en: 'Use Henderson-Hasselbalch equation to verify results' })}</span>
                   </div>
                 </div>
               </div>
@@ -1652,12 +1492,401 @@ const ChemistryGameSuite: React.FC = () => {
     );
   };
 
+  // MORE COMPLEX Chiral Challenge Game
+  const ChiralChallengeGame: React.FC = () => {
+    const [level, setLevel] = useState(0);
+    const [rotation, setRotation] = useState({ a: 0, b: 0 });
+    const [feedback, setFeedback] = useState<{type: 'correct' | 'incorrect', message: string} | null>(null);
+    const [score, setScore] = useState(0);
+    const [selectedCenters, setSelectedCenters] = useState<number[]>([]);
+
+    const levels = [
+        { type: 'identify_chiral', molecule: { name: 'Alanine', svg: 'alanine', isChiral: true, centers: [1] }, question: {zh: '这个分子是手性还是非手性？', en: 'Is this molecule Chiral or Achiral?'} },
+        { type: 'find_centers', molecule: { name: '2,3-dihydroxybutanal', svg: 'dihydroxybutanal', isChiral: true, centers: [1, 2] }, question: {zh: '点击标记所有的手性中心。', en: 'Click to mark all chiral centers.'} },
+        { type: 'compare', molecules: [{ name: 'R-Limonene', svg: 'r-limonene' }, { name: 'S-Limonene', svg: 's-limonene' }], relationship: 'enantiomers', question: {zh: '这两个分子是什么关系？', en: 'What is the relationship between these two molecules?'} },
+        { type: 'identify_chiral', molecule: { name: 'Meso-tartaric acid', svg: 'meso-tartaric', isChiral: false, centers: [1, 2] }, question: {zh: '这个分子是手性还是非手性？', en: 'Is this molecule Chiral or Achiral?'} },
+    ];
+
+    const currentLevelData = levels[level];
+
+    const MoleculeSVG = ({ name, rotation, onClick }: { name: string, rotation: number, onClick?: (index: number) => void }) => {
+        const svgs: {[key: string]: React.ReactNode} = {
+            'alanine': (
+                <g>
+                    <line x1="125" y1="100" x2="85" y2="120" stroke="white" strokeWidth="3" />
+                    <line x1="125" y1="100" x2="165" y2="120" stroke="white" strokeWidth="3" />
+                    <path d="M 125 100 L 125 60" stroke="white" strokeWidth="12" strokeLinecap="round" />
+                    <path d="M 125 100 L 145 90 L 155 80" fill="none" stroke="white" strokeWidth="3" />
+                    <circle cx="125" cy="100" r="8" fill="orange" onClick={() => onClick && onClick(1)} className="cursor-pointer" />
+                    <text x="75" y="140" fill="white">COOH</text>
+                    <text x="155" y="140" fill="white">NH₂</text>
+                    <text x="130" y="60" fill="white">CH₃</text>
+                    <text x="160" y="80" fill="white">H</text>
+                </g>
+            ),
+            'dihydroxybutanal': (
+                <g>
+                    <line x1="125" y1="100" x2="85" y2="120" stroke="white" strokeWidth="3" />
+                    <line x1="125" y1="100" x2="125" y2="60" stroke="white" strokeWidth="3" />
+                    <line x1="85" y1="120" x2="45" y2="100" stroke="white" strokeWidth="3" />
+                    <path d="M 125 100 L 145 90 L 155 80" fill="none" stroke="white" strokeWidth="3" />
+                    <path d="M 85 120 L 105 130 L 95 140" fill="white" stroke="white" strokeWidth="3" strokeLinejoin='round' />
+                    <circle cx="125" cy="100" r="8" fill="orange" onClick={() => onClick && onClick(1)} className="cursor-pointer" />
+                    <circle cx="85" cy="120" r="8" fill="orange" onClick={() => onClick && onClick(2)} className="cursor-pointer" />
+                    <text x="130" y="55" fill="white">CHO</text>
+                    <text x="25" y="100" fill="white">CH₃</text>
+                    <text x="160" y="80" fill="white">OH</text>
+                    <text x="100" y="150" fill="white">OH</text>
+                </g>
+            ),
+            'r-limonene': <image href="https://upload.wikimedia.org/wikipedia/commons/thumb/3/35/R-Limonene-2D-skeletal.svg/200px-R-Limonene-2D-skeletal.svg.png" height="150" width="150" x="50" y="25" />,
+            's-limonene': <image href="https://upload.wikimedia.org/wikipedia/commons/thumb/8/8a/S-Limonene-2D-skeletal.svg/200px-S-Limonene-2D-skeletal.svg.png" height="150" width="150" x="50" y="25" />,
+            'meso-tartaric': <image href="https://upload.wikimedia.org/wikipedia/commons/thumb/a/a2/Meso-tartaric_acid.svg/200px-Meso-tartaric_acid.svg.png" height="150" width="150" x="50" y="25" />,
+        };
+        return <g style={{ transform: `rotateY(${rotation}deg)` }}>{svgs[name]}</g>;
+    }
+
+    const nextLevel = () => {
+        if (level < levels.length - 1) {
+            setLevel(l => l + 1);
+            setFeedback(null);
+            setSelectedCenters([]);
+        } else {
+            setFeedback({type: 'correct', message: getText({zh: '恭喜！你已完成所有挑战！', en: 'Congratulations! You have completed all challenges!'})});
+        }
+    }
+
+    const handleAnswer = (answer: any) => {
+        let isCorrect = false;
+        if (currentLevelData.type === 'identify_chiral') {
+            isCorrect = answer === (currentLevelData.molecule as any).isChiral;
+        } else if (currentLevelData.type === 'find_centers') {
+            const correctCenters = (currentLevelData.molecule as any).centers;
+            isCorrect = selectedCenters.length === correctCenters.length && selectedCenters.every(c => correctCenters.includes(c));
+        } else if (currentLevelData.type === 'compare') {
+            isCorrect = answer === (currentLevelData as any).relationship;
+        }
+
+        if (isCorrect) {
+            setFeedback({type: 'correct', message: getText({zh: '正确！', en: 'Correct!'})});
+            setScore(s => s + 100);
+            setTimeout(nextLevel, 1500);
+        } else {
+            setFeedback({type: 'incorrect', message: getText({zh: '不正确，再试一次。', en: 'Incorrect, try again.'})});
+            setTimeout(() => setFeedback(null), 2000);
+        }
+    };
+    
+    const handleCenterClick = (index: number) => {
+        if (currentLevelData.type !== 'find_centers') return;
+        const newSelection = selectedCenters.includes(index)
+            ? selectedCenters.filter(i => i !== index)
+            : [...selectedCenters, index];
+        setSelectedCenters(newSelection);
+    }
+
+    return (
+        <div className="min-h-screen bg-gradient-to-br from-purple-900 via-pink-900 to-rose-800 p-6 text-white">
+            <div className="max-w-5xl mx-auto bg-white/10 backdrop-blur-md rounded-xl p-8">
+                <h2 className="text-3xl font-bold text-center mb-2">{getText({zh: '手性挑战', en: 'Chiral Challenge'})}</h2>
+                <p className="text-center text-purple-200 mb-2">{getText({zh: `关卡 ${level + 1}/${levels.length}`, en: `Level ${level + 1}/${levels.length}`})}</p>
+                <p className="text-center text-lg font-semibold mb-6">{getText(currentLevelData.question)}</p>
+
+                <div className={`flex justify-center items-center mb-8 gap-8`} style={{ perspective: '1000px' }}>
+                    {currentLevelData.type === 'compare' ? (
+                        <>
+                            <svg width="300" height="200" viewBox="0 0 300 200"><MoleculeSVG name={currentLevelData.molecules[0].svg} rotation={rotation.a} /></svg>
+                            <svg width="300" height="200" viewBox="0 0 300 200"><MoleculeSVG name={currentLevelData.molecules[1].svg} rotation={rotation.b} /></svg>
+                        </>
+                    ) : (
+                        <svg width="300" height="200" viewBox="0 0 300 200">
+                           <MoleculeSVG name={(currentLevelData.molecule as any).svg} rotation={rotation.a} onClick={handleCenterClick} />
+                           {(currentLevelData.molecule as any).centers.map((c: any, i: number) => selectedCenters.includes(c) && <circle key={i} cx={c === 1 ? 125 : 85} cy={c === 1 ? 100 : 120} r="12" fill="none" stroke="cyan" strokeWidth="2" />)}
+                        </svg>
+                    )}
+                </div>
+
+                <div className="flex justify-center gap-4 mb-8">
+                     <button onClick={() => setRotation(r => ({...r, a: r.a - 20}))} className="p-3 bg-purple-600 hover:bg-purple-700 rounded-lg transition">{getText({zh: '旋转 A', en: 'Rotate A'})}</button>
+                     {currentLevelData.type === 'compare' && <button onClick={() => setRotation(r => ({...r, b: r.b - 20}))} className="p-3 bg-pink-600 hover:bg-pink-700 rounded-lg transition">{getText({zh: '旋转 B', en: 'Rotate B'})}</button>}
+                </div>
+
+                <div className="text-center mb-6">
+                    {currentLevelData.type === 'identify_chiral' && (
+                        <div className="flex justify-center gap-6">
+                            <button onClick={() => handleAnswer(true)} className="px-8 py-3 bg-green-600 hover:bg-green-700 rounded-lg font-bold transition">{getText({zh: '手性', en: 'Chiral'})}</button>
+                            <button onClick={() => handleAnswer(false)} className="px-8 py-3 bg-red-600 hover:bg-red-700 rounded-lg font-bold transition">{getText({zh: '非手性', en: 'Achiral'})}</button>
+                        </div>
+                    )}
+                    {currentLevelData.type === 'find_centers' && (
+                        <button onClick={() => handleAnswer(null)} className="px-8 py-3 bg-blue-600 hover:bg-blue-700 rounded-lg font-bold transition">{getText({zh: '确认手性中心', en: 'Confirm Centers'})}</button>
+                    )}
+                    {currentLevelData.type === 'compare' && (
+                        <div className="flex flex-wrap justify-center gap-4">
+                            <button onClick={() => handleAnswer('enantiomers')} className="px-6 py-2 bg-teal-600 hover:bg-teal-700 rounded-lg transition">{getText({zh: '对映异构体', en: 'Enantiomers'})}</button>
+                            <button onClick={() => handleAnswer('diastereomers')} className="px-6 py-2 bg-teal-600 hover:bg-teal-700 rounded-lg transition">{getText({zh: '非对映异构体', en: 'Diastereomers'})}</button>
+                            <button onClick={() => handleAnswer('identical')} className="px-6 py-2 bg-teal-600 hover:bg-teal-700 rounded-lg transition">{getText({zh: '相同分子', en: 'Identical'})}</button>
+                            <button onClick={() => handleAnswer('constitutional')} className="px-6 py-2 bg-teal-600 hover:bg-teal-700 rounded-lg transition">{getText({zh: '构造异构体', en: 'Constitutional Isomers'})}</button>
+                        </div>
+                    )}
+                </div>
+
+                {feedback && (
+                    <div className={`mt-6 p-4 rounded-lg text-center font-semibold ${feedback.type === 'correct' ? 'bg-green-500/30 text-green-200' : 'bg-red-500/30 text-red-200'}`}>
+                        {feedback.message}
+                    </div>
+                )}
+            </div>
+        </div>
+    );
+  };
+
+  // MORE COMPLEX Synthesis Strategist Game
+  const SynthesisStrategistGame: React.FC = () => {
+    const [path, setPath] = useState<string[]>([]);
+    const [feedback, setFeedback] = useState<{type: 'success' | 'error', message: string} | null>(null);
+    const [puzzle, setPuzzle] = useState({start: '', target: ''});
+
+    const molecules = {
+        'ethene': { name: 'Ethene', functional_group: 'alkene' },
+        'ethanol': { name: 'Ethanol', functional_group: 'primary_alcohol' },
+        'ethanal': { name: 'Ethanal', functional_group: 'aldehyde' },
+        'ethanoic_acid': { name: 'Ethanoic Acid', functional_group: 'carboxylic_acid' },
+        'chloroethane': { name: 'Chloroethane', functional_group: 'haloalkane' },
+        'ethylamine': { name: 'Ethylamine', functional_group: 'amine' },
+        'acetonitrile': { name: 'Acetonitrile', functional_group: 'nitrile' },
+        'propanoic_acid': { name: 'Propanoic Acid', functional_group: 'carboxylic_acid' },
+    };
+
+    const reactions = [
+        { id: 'hydration', name: {zh: '水合', en: 'Hydration'}, reagent: {zh: 'H₃PO₄/H₂O, heat', en: 'H₃PO₄/H₂O, heat'}, from_fg: 'alkene', to: 'ethanol' },
+        { id: 'mild_oxidation', name: {zh: '温和氧化', en: 'Mild Oxidation'}, reagent: {zh: 'PCC, CH₂Cl₂', en: 'PCC, CH₂Cl₂'}, from_fg: 'primary_alcohol', to: 'ethanal' },
+        { id: 'strong_oxidation', name: {zh: '强氧化', en: 'Strong Oxidation'}, reagent: {zh: 'KMnO₄/H⁺, reflux', en: 'KMnO₄/H⁺, reflux'}, from_fg: 'primary_alcohol', to: 'ethanoic_acid' },
+        { id: 'nucleophilic_sub_cl', name: {zh: '亲核取代 (Cl)', en: 'Nucleophilic Sub (Cl)'}, reagent: {zh: 'SOCl₂', en: 'SOCl₂'}, from_fg: 'primary_alcohol', to: 'chloroethane' },
+        { id: 'nucleophilic_sub_nh3', name: {zh: '亲核取代 (NH₂)', en: 'Nucleophilic Sub (NH₂)'}, reagent: {zh: 'xs NH₃, ethanol', en: 'xs NH₃, ethanol'}, from_fg: 'haloalkane', to: 'ethylamine' },
+        { id: 'nucleophilic_sub_cn', name: {zh: '亲核取代 (CN)', en: 'Nucleophilic Sub (CN)'}, reagent: {zh: 'NaCN, ethanol/water', en: 'NaCN, ethanol/water'}, from_fg: 'haloalkane', to: 'acetonitrile' },
+        { id: 'nitrile_hydrolysis', name: {zh: '腈水解', en: 'Nitrile Hydrolysis'}, reagent: {zh: 'H₃O⁺, heat', en: 'H₃O⁺, heat'}, from_fg: 'nitrile', to: 'propanoic_acid' },
+        // Distractors
+        { id: 'distractor1', name: {zh: '还原', en: 'Reduction'}, reagent: {zh: 'LiAlH₄', en: 'LiAlH₄'}, from_fg: 'alkene', to: 'ethene' },
+        { id: 'distractor2', name: {zh: '酯化', en: 'Esterification'}, reagent: {zh: 'CH₃OH/H⁺', en: 'CH₃OH/H⁺'}, from_fg: 'aldehyde', to: 'ethanal' },
+    ];
+    
+    const puzzles = [
+        { start: 'ethene', target: 'ethanoic_acid' },
+        { start: 'ethene', target: 'propanoic_acid' },
+    ];
+
+    useEffect(() => {
+        startNewPuzzle();
+    }, []);
+
+    const startNewPuzzle = () => {
+        const newPuzzle = puzzles[Math.floor(Math.random() * puzzles.length)];
+        setPuzzle(newPuzzle);
+        setPath([newPuzzle.start]);
+        setFeedback(null);
+    };
+
+    const handleReaction = (reactionId: string) => {
+        const reaction = reactions.find(r => r.id === reactionId);
+        const currentMoleculeKey = path[path.length - 1];
+        const currentMolecule = molecules[currentMoleculeKey as keyof typeof molecules];
+
+        if (reaction && reaction.from_fg === currentMolecule.functional_group) {
+            const nextMoleculeKey = reaction.to;
+            setPath([...path, nextMoleculeKey]);
+            setFeedback(null);
+            if (nextMoleculeKey === puzzle.target) {
+                 setFeedback({type: 'success', message: getText({zh: '成功！你合成了目标产物！', en: 'Success! You synthesized the target molecule!'})});
+            }
+        } else {
+            setFeedback({type: 'error', message: getText({zh: '错误的反应或起始物。', en: 'Wrong reaction or starting material.'})});
+        }
+    };
+
+    const currentMoleculeKey = path[path.length-1];
+    const availableReactions = reactions.filter(r => r.from_fg === molecules[currentMoleculeKey as keyof typeof molecules]?.functional_group);
+
+    return (
+        <div className="min-h-screen bg-gradient-to-br from-red-900 via-orange-900 to-yellow-800 p-6 text-white">
+            <div className="max-w-7xl mx-auto">
+                <h2 className="text-4xl font-bold text-center mb-4">{getText({zh: '合成策略师', en: 'Synthesis Strategist'})}</h2>
+                <p className="text-center text-red-200 mb-8">{getText({zh: `目标: 从 ${molecules[puzzle.start as keyof typeof molecules]?.name} 合成 ${molecules[puzzle.target as keyof typeof molecules]?.name}`, en: `Task: Synthesize ${molecules[puzzle.target as keyof typeof molecules]?.name} from ${molecules[puzzle.start as keyof typeof molecules]?.name}`})}</p>
+                
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                    <div className="md:col-span-1 bg-white/10 backdrop-blur-md rounded-xl p-6">
+                        <h3 className="text-xl font-bold mb-4">{getText({zh: '可用反应', en: 'Available Reactions'})}</h3>
+                        <div className="space-y-3">
+                            {availableReactions.map(r => (
+                                <button key={r.id} onClick={() => handleReaction(r.id)} className="w-full text-left p-3 bg-red-800/50 hover:bg-red-700/50 rounded-lg transition">
+                                    <p className="font-semibold">{getText(r.name)}</p>
+                                    <p className="text-sm text-red-200">{getText(r.reagent)}</p>
+                                </button>
+                            ))}
+                        </div>
+                    </div>
+
+                    <div className="md:col-span-2 bg-white/10 backdrop-blur-md rounded-xl p-6">
+                        <div className="flex justify-between items-center mb-4">
+                            <h3 className="text-xl font-bold">{getText({zh: '你的合成路径', en: 'Your Pathway'})}</h3>
+                            <button onClick={startNewPuzzle} className="px-4 py-2 bg-gray-600 hover:bg-gray-700 rounded-lg transition">{getText({zh: '新谜题', en: 'New Puzzle'})}</button>
+                        </div>
+                        <div className="flex items-center flex-wrap gap-4 p-4 bg-black/20 rounded-lg min-h-[100px]">
+                            {path.map((key, index) => (
+                                <React.Fragment key={index}>
+                                    <div className="p-3 bg-blue-600 rounded-lg shadow-lg">
+                                        {molecules[key as keyof typeof molecules].name}
+                                    </div>
+                                    {index < path.length - 1 && <div className="text-2xl font-bold text-yellow-400">→</div>}
+                                </React.Fragment>
+                            ))}
+                        </div>
+                        {feedback && (
+                            <div className={`mt-6 p-4 rounded-lg text-center font-semibold ${feedback.type === 'success' ? 'bg-green-500/30 text-green-200' : 'bg-red-500/30 text-yellow-200'}`}>
+                                {feedback.message}
+                            </div>
+                        )}
+                    </div>
+                </div>
+            </div>
+        </div>
+    );
+  };
+
+  // MORE COMPLEX Kinetics Lab Game
+  const KineticsLabGame: React.FC = () => {
+    const [experiments, setExperiments] = useState<{concA: number, concB: number, rate: number}[]>([]);
+    const [trueOrders, setTrueOrders] = useState({ orderA: 1, orderB: 2, k: 2.0 });
+    const [inputs, setInputs] = useState({ concA: '0.1', concB: '0.1' });
+    const [answers, setAnswers] = useState({ orderA: '', orderB: '', k: '' });
+    const [feedback, setFeedback] = useState<string | null>(null);
+    const [showHint, setShowHint] = useState(false);
+
+    useEffect(() => {
+        startNewProblem();
+    }, []);
+
+    const startNewProblem = () => {
+        setTrueOrders({
+            orderA: [0, 1, 2][Math.floor(Math.random() * 3)],
+            orderB: [0, 1, 2][Math.floor(Math.random() * 3)],
+            k: parseFloat((Math.random() * 5 + 0.5).toFixed(2)),
+        });
+        setExperiments([]);
+        setAnswers({ orderA: '', orderB: '', k: '' });
+        setFeedback(null);
+    };
+
+    const handleRunExperiment = () => {
+        const concA = parseFloat(inputs.concA);
+        const concB = parseFloat(inputs.concB);
+        if (isNaN(concA) || isNaN(concB) || concA <= 0 || concB <= 0) {
+            setFeedback(getText({zh: '请输入有效的正浓度值。', en: 'Please enter valid positive concentrations.'}));
+            return;
+        }
+        const rate = trueOrders.k * Math.pow(concA, trueOrders.orderA) * Math.pow(concB, trueOrders.orderB);
+        setExperiments([...experiments, { concA, concB, rate }]);
+        setFeedback(null);
+    };
+
+    const handleCheckAnswers = () => {
+        const orderA = parseInt(answers.orderA);
+        const orderB = parseInt(answers.orderB);
+        const k = parseFloat(answers.k);
+
+        const isOrderACorrect = orderA === trueOrders.orderA;
+        const isOrderBCorrect = orderB === trueOrders.orderB;
+        const isKCorrect = Math.abs((k - trueOrders.k) / trueOrders.k) < 0.1; // 10% tolerance for k
+
+        if (isOrderACorrect && isOrderBCorrect && isKCorrect) {
+            setFeedback(getText({zh: '完全正确！你成功确定了速率方程！', en: 'Perfect! You&rsquo;ve determined the rate law!'}));
+        } else {
+            let errorMsg = getText({zh: '答案不完全正确。', en: 'Not quite right.'});
+            if (!isOrderACorrect) errorMsg += getText({zh: ' A的级数错误。', en: ' Order for A is incorrect.'});
+            if (!isOrderBCorrect) errorMsg += getText({zh: ' B的级数错误。', en: ' Order for B is incorrect.'});
+            if (!isKCorrect) errorMsg += getText({zh: ' k值不准确。', en: ' The value for k is not accurate.'});
+            setFeedback(errorMsg);
+        }
+    };
+
+    return (
+        <div className="min-h-screen bg-gradient-to-br from-indigo-900 via-blue-900 to-sky-800 p-6 text-white">
+            <div className="max-w-6xl mx-auto">
+                <h2 className="text-4xl font-bold text-center mb-4">{getText({zh: '动力学实验室', en: 'Kinetics Lab'})}</h2>
+                <p className="text-center text-indigo-200 mb-8">{getText({zh: '通过实验确定一个未知反应的速率方程。', en: 'Determine the rate law for an unknown reaction by experiment.'})}</p>
+
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                    <div className="bg-white/10 backdrop-blur-md rounded-xl p-6">
+                        <h3 className="text-xl font-bold mb-4">{getText({zh: '实验数据', en: 'Experimental Data'})}</h3>
+                        <table className="w-full text-left">
+                            <thead>
+                                <tr className="border-b border-white/20">
+                                    <th className="p-2">{getText({zh: '实验', en: 'Exp.'})}</th>
+                                    <th className="p-2">[A] (M)</th>
+                                    <th className="p-2">[B] (M)</th>
+                                    <th className="p-2">{getText({zh: '初始速率', en: 'Initial Rate'})} (M/s)</th>
+                                </tr>
+                            </thead>
+                           <tbody>
+                                {experiments.map((exp, i) => (
+                                    <tr key={i} className="border-b border-white/10">
+                                        <td className="p-2">{i + 1}</td>
+                                        <td className="p-2">{exp.concA.toFixed(3)}</td>
+                                        <td className="p-2">{exp.concB.toFixed(3)}</td>
+                                        <td className="p-2">{exp.rate.toExponential(2)}</td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
+                        <div className="mt-6 p-4 bg-black/20 rounded-lg">
+                            <h4 className="font-semibold mb-3">{getText({zh: '运行新实验', en: 'Run New Experiment'})}</h4>
+                            <div className="flex items-center gap-4">
+                                <input type="number" step="0.1" value={inputs.concA} onChange={e => setInputs({...inputs, concA: e.target.value})} placeholder="[A]" className="w-full p-2 rounded bg-gray-800 text-white border border-gray-600"/>
+                                <input type="number" step="0.1" value={inputs.concB} onChange={e => setInputs({...inputs, concB: e.target.value})} placeholder="[B]" className="w-full p-2 rounded bg-gray-800 text-white border border-gray-600"/>
+                                <button onClick={handleRunExperiment} className="px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded-lg transition">{getText({zh: '运行', en: 'Run'})}</button>
+                            </div>
+                        </div>
+                         <button onClick={startNewProblem} className="w-full mt-4 py-2 bg-red-600 hover:bg-red-700 rounded-lg transition">{getText({zh: '新问题', en: 'New Problem'})}</button>
+                    </div>
+
+                    <div className="bg-white/10 backdrop-blur-md rounded-xl p-6">
+                        <h3 className="text-xl font-bold mb-4">{getText({zh: '分析与提交', en: 'Analysis & Submission'})}</h3>
+                        <p className="mb-4">{getText({zh: '根据数据推导速率方程: rate = k[A]ˣ[B]ʸ', en: 'From the data, deduce the rate law: rate = k[A]ˣ[B]ʸ'})}</p>
+                        <div className="space-y-4">
+                           <div>
+                                <label className="block mb-1 font-semibold">{getText({zh: 'A的反应级数 (x)', en: 'Order for A (x)'})}</label>
+                                <input type="number" value={answers.orderA} onChange={e => setAnswers({...answers, orderA: e.target.value})} className="w-full p-2 rounded bg-gray-800 text-white border border-gray-600"/>
+                            </div>
+                            <div>
+                                <label className="block mb-1 font-semibold">{getText({zh: 'B的反应级数 (y)', en: 'Order for B (y)'})}</label>
+                                <input type="number" value={answers.orderB} onChange={e => setAnswers({...answers, orderB: e.target.value})} className="w-full p-2 rounded bg-gray-800 text-white border border-gray-600"/>
+                            </div>
+                            <div>
+                                <label className="block mb-1 font-semibold">{getText({zh: '速率常数 (k)', en: 'Rate Constant (k)'})}</label>
+                                <input type="number" value={answers.k} onChange={e => setAnswers({...answers, k: e.target.value})} className="w-full p-2 rounded bg-gray-800 text-white border border-gray-600"/>
+                            </div>
+                        </div>
+                        <button onClick={handleCheckAnswers} className="w-full mt-6 py-3 bg-green-600 hover:bg-green-700 rounded-lg font-bold transition">{getText({zh: '检查答案', en: 'Check Answers'})}</button>
+                        <button onClick={() => setShowHint(!showHint)} className="w-full mt-2 py-2 bg-yellow-600 hover:bg-yellow-700 rounded-lg transition">{getText({zh: '提示', en: 'Hint'})}</button>
+                        {showHint && <div className="mt-4 p-3 bg-yellow-500/20 text-yellow-200 rounded-lg text-sm">{getText({zh: '要确定A的级数，进行两个实验，其中[B]保持不变，而[A]发生变化。比较速率的变化。对B也这样做。', en: 'To find the order of A, run two experiments where [B] is constant but [A] changes. Compare the change in rate. Do the same for B.'})}</div>}
+                        {feedback && (
+                            <div className={`mt-6 p-4 rounded-lg text-center font-semibold ${feedback.includes('Perfect') || feedback.includes('完全正确') ? 'bg-green-500/30 text-green-200' : 'bg-red-500/30 text-red-200'}`}>
+                                {feedback}
+                            </div>
+                        )}
+                    </div>
+                </div>
+            </div>
+        </div>
+    );
+  };
+
+
   // Main component render
   if (currentGame) {
     return (
       <div>
-        {/* Game Header with Back Button */}
-        <div className="bg-black/20 backdrop-blur-md border-b border-white/20 p-4">
+        <div className="bg-black/20 backdrop-blur-md border-b border-white/20 p-4 sticky top-0 z-50">
           <div className="max-w-7xl mx-auto flex items-center justify-between">
             <button
               onClick={() => setCurrentGame(null)}
@@ -1677,19 +1906,19 @@ const ChemistryGameSuite: React.FC = () => {
           </div>
         </div>
 
-        {/* Render Current Game */}
         {currentGame === 'electrochemical' && <ElectrochemicalGame />}
         {currentGame === 'ligand-swap' && <LigandSwapGame />}
         {currentGame === 'ph-balancer' && <PHBalancerGame />}
-        {/* Add other games here */}
+        {currentGame === 'chiral-challenge' && <ChiralChallengeGame />}
+        {currentGame === 'synthesis-strategist' && <SynthesisStrategistGame />}
+        {currentGame === 'kinetics-lab' && <KineticsLabGame />}
       </div>
     );
   }
 
-  // Main menu (keep existing menu code)
+  // Main menu
   return (
-    <main className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900">
-      {/* Header */}
+    <main className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 text-white">
       <header className="relative overflow-hidden bg-gradient-to-r from-blue-600 via-purple-600 to-indigo-600 py-16">
         <div className="absolute inset-0 bg-black/20"></div>
         <div className="relative max-w-7xl mx-auto px-6 text-center">
@@ -1710,7 +1939,6 @@ const ChemistryGameSuite: React.FC = () => {
             {getText(currentLangText.subtitle)}
           </p>
           
-          {/* Progress Stats */}
           <div className="flex justify-center items-center gap-8">
             <div className="flex items-center gap-2 bg-white/10 backdrop-blur-md px-4 py-2 rounded-lg">
               <Award className="w-5 h-5 text-yellow-400" />
@@ -1728,7 +1956,6 @@ const ChemistryGameSuite: React.FC = () => {
         </div>
       </header>
 
-      {/* Games Grid */}
       <section className="max-w-7xl mx-auto px-6 py-16">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {games.map((game) => (
@@ -1738,7 +1965,6 @@ const ChemistryGameSuite: React.FC = () => {
                          hover:border-white/40 transition-all duration-300 hover:scale-105
                          hover:shadow-2xl overflow-hidden group"
             >
-              {/* Game Header */}
               <div className={`bg-gradient-to-r ${game.color} p-6 relative`}>
                 <div className="flex items-center justify-between mb-4">
                   <div className="text-white">
@@ -1759,7 +1985,6 @@ const ChemistryGameSuite: React.FC = () => {
                 </div>
               </div>
 
-              {/* Game Content */}
               <div className="p-6">
                 <div className="mb-4">
                   <h4 className="text-cyan-300 font-semibold mb-2">
