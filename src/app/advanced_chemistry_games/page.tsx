@@ -1,7 +1,7 @@
 "use client"
 
-import React, { useState, useRef, useEffect } from 'react';
-import { Zap, Atom, FlaskConical, RotateCcw, Network, BarChart3, Play, Globe, Award, Target, Home, CheckCircle, XCircle, Beaker, ArrowLeft, Plus, Minus, RotateCw, Calculator, Eye, Settings, Trash2, Save, Dna } from 'lucide-react';
+import React, { useState, useEffect, useCallback } from 'react';
+import { Zap, Atom, FlaskConical, Network, BarChart3, Play, Globe, Award, Target, CheckCircle, XCircle, Beaker, ArrowLeft, RotateCw, Calculator, Dna, RotateCcw } from 'lucide-react';
 
 interface LanguageText {
   zh: string;
@@ -19,6 +19,45 @@ interface GameData {
   color: string;
   gameplay: LanguageText;
 }
+
+// Types for Chiral Challenge Game
+interface Molecule {
+    name: string;
+    svg: string;
+}
+
+interface IdentifyChiralMolecule extends Molecule {
+    isChiral: boolean;
+    centers: number[];
+}
+
+interface FindCentersMolecule extends Molecule {
+    isChiral: boolean;
+    centers: number[];
+}
+
+interface BaseLevel {
+    question: LanguageText;
+}
+
+interface IdentifyChiralLevel extends BaseLevel {
+    type: 'identify_chiral';
+    molecule: IdentifyChiralMolecule;
+}
+
+interface FindCentersLevel extends BaseLevel {
+    type: 'find_centers';
+    molecule: FindCentersMolecule;
+}
+
+interface CompareLevel extends BaseLevel {
+    type: 'compare';
+    molecules: [Molecule, Molecule];
+    relationship: 'enantiomers' | 'diastereomers' | 'identical' | 'constitutional';
+}
+
+type ChiralLevelData = IdentifyChiralLevel | FindCentersLevel | CompareLevel;
+
 
 const ChemistryGameSuite: React.FC = () => {
   const [currentLang, setCurrentLang] = useState<'zh' | 'en'>('zh');
@@ -118,7 +157,7 @@ const ChemistryGameSuite: React.FC = () => {
   };
 
   const handleGameComplete = (gameId: string): void => {
-    setCompletedGames(prev => new Set([...prev, gameId]));
+    setCompletedGames(prev => new Set(prev).add(gameId));
   };
 
   const currentLangText = {
@@ -665,6 +704,8 @@ const ChemistryGameSuite: React.FC = () => {
           if (currentLevel < levels.length - 1) {
             setCurrentLevel(prev => prev + 1);
             resetLevel();
+          } else {
+            handleGameComplete('ligand-swap');
           }
         }, 2000);
       } else {
@@ -1500,7 +1541,7 @@ const ChemistryGameSuite: React.FC = () => {
     const [score, setScore] = useState(0);
     const [selectedCenters, setSelectedCenters] = useState<number[]>([]);
 
-    const levels = [
+    const levels: ChiralLevelData[] = [
         { type: 'identify_chiral', molecule: { name: 'Alanine', svg: 'alanine', isChiral: true, centers: [1] }, question: {zh: '这个分子是手性还是非手性？', en: 'Is this molecule Chiral or Achiral?'} },
         { type: 'find_centers', molecule: { name: '2,3-dihydroxybutanal', svg: 'dihydroxybutanal', isChiral: true, centers: [1, 2] }, question: {zh: '点击标记所有的手性中心。', en: 'Click to mark all chiral centers.'} },
         { type: 'compare', molecules: [{ name: 'R-Limonene', svg: 'r-limonene' }, { name: 'S-Limonene', svg: 's-limonene' }], relationship: 'enantiomers', question: {zh: '这两个分子是什么关系？', en: 'What is the relationship between these two molecules?'} },
@@ -1553,18 +1594,19 @@ const ChemistryGameSuite: React.FC = () => {
             setSelectedCenters([]);
         } else {
             setFeedback({type: 'correct', message: getText({zh: '恭喜！你已完成所有挑战！', en: 'Congratulations! You have completed all challenges!'})});
+            handleGameComplete('chiral-challenge');
         }
     }
 
-    const handleAnswer = (answer: any) => {
+    const handleAnswer = (answer: boolean | 'enantiomers' | 'diastereomers' | 'identical' | 'constitutional' | null) => {
         let isCorrect = false;
         if (currentLevelData.type === 'identify_chiral') {
-            isCorrect = answer === (currentLevelData.molecule as any).isChiral;
+            isCorrect = answer === currentLevelData.molecule.isChiral;
         } else if (currentLevelData.type === 'find_centers') {
-            const correctCenters = (currentLevelData.molecule as any).centers;
+            const correctCenters = currentLevelData.molecule.centers;
             isCorrect = selectedCenters.length === correctCenters.length && selectedCenters.every(c => correctCenters.includes(c));
         } else if (currentLevelData.type === 'compare') {
-            isCorrect = answer === (currentLevelData as any).relationship;
+            isCorrect = answer === currentLevelData.relationship;
         }
 
         if (isCorrect) {
@@ -1600,8 +1642,8 @@ const ChemistryGameSuite: React.FC = () => {
                         </>
                     ) : (
                         <svg width="300" height="200" viewBox="0 0 300 200">
-                           <MoleculeSVG name={(currentLevelData.molecule as any).svg} rotation={rotation.a} onClick={handleCenterClick} />
-                           {(currentLevelData.molecule as any).centers.map((c: any, i: number) => selectedCenters.includes(c) && <circle key={i} cx={c === 1 ? 125 : 85} cy={c === 1 ? 100 : 120} r="12" fill="none" stroke="cyan" strokeWidth="2" />)}
+                           <MoleculeSVG name={currentLevelData.molecule.svg} rotation={rotation.a} onClick={handleCenterClick} />
+                           {currentLevelData.molecule.centers.map((c, i) => selectedCenters.includes(c) && <circle key={i} cx={c === 1 ? 125 : 85} cy={c === 1 ? 100 : 120} r="12" fill="none" stroke="cyan" strokeWidth="2" />)}
                         </svg>
                     )}
                 </div>
@@ -1647,7 +1689,7 @@ const ChemistryGameSuite: React.FC = () => {
     const [feedback, setFeedback] = useState<{type: 'success' | 'error', message: string} | null>(null);
     const [puzzle, setPuzzle] = useState({start: '', target: ''});
 
-    const molecules = {
+    const molecules: {[key: string]: { name: string, functional_group: string }} = {
         'ethene': { name: 'Ethene', functional_group: 'alkene' },
         'ethanol': { name: 'Ethanol', functional_group: 'primary_alcohol' },
         'ethanal': { name: 'Ethanal', functional_group: 'aldehyde' },
@@ -1676,21 +1718,21 @@ const ChemistryGameSuite: React.FC = () => {
         { start: 'ethene', target: 'propanoic_acid' },
     ];
 
-    useEffect(() => {
-        startNewPuzzle();
-    }, []);
-
-    const startNewPuzzle = () => {
+    const startNewPuzzle = useCallback(() => {
         const newPuzzle = puzzles[Math.floor(Math.random() * puzzles.length)];
         setPuzzle(newPuzzle);
         setPath([newPuzzle.start]);
         setFeedback(null);
-    };
+    }, []);
+
+    useEffect(() => {
+        startNewPuzzle();
+    }, [startNewPuzzle]);
 
     const handleReaction = (reactionId: string) => {
         const reaction = reactions.find(r => r.id === reactionId);
         const currentMoleculeKey = path[path.length - 1];
-        const currentMolecule = molecules[currentMoleculeKey as keyof typeof molecules];
+        const currentMolecule = molecules[currentMoleculeKey];
 
         if (reaction && reaction.from_fg === currentMolecule.functional_group) {
             const nextMoleculeKey = reaction.to;
@@ -1698,6 +1740,7 @@ const ChemistryGameSuite: React.FC = () => {
             setFeedback(null);
             if (nextMoleculeKey === puzzle.target) {
                  setFeedback({type: 'success', message: getText({zh: '成功！你合成了目标产物！', en: 'Success! You synthesized the target molecule!'})});
+                 handleGameComplete('synthesis-strategist');
             }
         } else {
             setFeedback({type: 'error', message: getText({zh: '错误的反应或起始物。', en: 'Wrong reaction or starting material.'})});
@@ -1705,13 +1748,13 @@ const ChemistryGameSuite: React.FC = () => {
     };
 
     const currentMoleculeKey = path[path.length-1];
-    const availableReactions = reactions.filter(r => r.from_fg === molecules[currentMoleculeKey as keyof typeof molecules]?.functional_group);
+    const availableReactions = currentMoleculeKey ? reactions.filter(r => r.from_fg === molecules[currentMoleculeKey].functional_group) : [];
 
     return (
         <div className="min-h-screen bg-gradient-to-br from-red-900 via-orange-900 to-yellow-800 p-6 text-white">
             <div className="max-w-7xl mx-auto">
                 <h2 className="text-4xl font-bold text-center mb-4">{getText({zh: '合成策略师', en: 'Synthesis Strategist'})}</h2>
-                <p className="text-center text-red-200 mb-8">{getText({zh: `目标: 从 ${molecules[puzzle.start as keyof typeof molecules]?.name} 合成 ${molecules[puzzle.target as keyof typeof molecules]?.name}`, en: `Task: Synthesize ${molecules[puzzle.target as keyof typeof molecules]?.name} from ${molecules[puzzle.start as keyof typeof molecules]?.name}`})}</p>
+                <p className="text-center text-red-200 mb-8">{getText({zh: `目标: 从 ${molecules[puzzle.start]?.name} 合成 ${molecules[puzzle.target]?.name}`, en: `Task: Synthesize ${molecules[puzzle.target]?.name} from ${molecules[puzzle.start]?.name}`})}</p>
                 
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                     <div className="md:col-span-1 bg-white/10 backdrop-blur-md rounded-xl p-6">
@@ -1735,7 +1778,7 @@ const ChemistryGameSuite: React.FC = () => {
                             {path.map((key, index) => (
                                 <React.Fragment key={index}>
                                     <div className="p-3 bg-blue-600 rounded-lg shadow-lg">
-                                        {molecules[key as keyof typeof molecules].name}
+                                        {molecules[key].name}
                                     </div>
                                     {index < path.length - 1 && <div className="text-2xl font-bold text-yellow-400">→</div>}
                                 </React.Fragment>
@@ -1762,11 +1805,7 @@ const ChemistryGameSuite: React.FC = () => {
     const [feedback, setFeedback] = useState<string | null>(null);
     const [showHint, setShowHint] = useState(false);
 
-    useEffect(() => {
-        startNewProblem();
-    }, []);
-
-    const startNewProblem = () => {
+    const startNewProblem = useCallback(() => {
         setTrueOrders({
             orderA: [0, 1, 2][Math.floor(Math.random() * 3)],
             orderB: [0, 1, 2][Math.floor(Math.random() * 3)],
@@ -1775,7 +1814,11 @@ const ChemistryGameSuite: React.FC = () => {
         setExperiments([]);
         setAnswers({ orderA: '', orderB: '', k: '' });
         setFeedback(null);
-    };
+    }, []);
+
+    useEffect(() => {
+        startNewProblem();
+    }, [startNewProblem]);
 
     const handleRunExperiment = () => {
         const concA = parseFloat(inputs.concA);
@@ -1800,6 +1843,7 @@ const ChemistryGameSuite: React.FC = () => {
 
         if (isOrderACorrect && isOrderBCorrect && isKCorrect) {
             setFeedback(getText({zh: '完全正确！你成功确定了速率方程！', en: 'Perfect! You&rsquo;ve determined the rate law!'}));
+            handleGameComplete('kinetics-lab');
         } else {
             let errorMsg = getText({zh: '答案不完全正确。', en: 'Not quite right.'});
             if (!isOrderACorrect) errorMsg += getText({zh: ' A的级数错误。', en: ' Order for A is incorrect.'});
