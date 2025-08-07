@@ -965,8 +965,692 @@ const ChemistryGameSuite: React.FC = () => {
     );
   };
 
-  // Continue with other enhanced games...
-  // (I'll continue with the other games if you'd like, but this gives you an idea of the enhanced complexity)
+  // Enhanced pH Balancer Game
+  const PHBalancerGame: React.FC = () => {
+    const [gamePhase, setGamePhase] = useState<'preparation' | 'buffer-setup' | 'testing' | 'calculation'>('preparation');
+    const [selectedBuffer, setSelectedBuffer] = useState<string>('');
+    const [bufferConcentration, setBufferConcentration] = useState<{acid: number, base: number}>({acid: 0.1, base: 0.1});
+    const [currentPH, setCurrentPH] = useState<number>(7.0);
+    const [targetPH, setTargetPH] = useState<number>(4.74);
+    const [addedAcid, setAddedAcid] = useState<number>(0);
+    const [addedBase, setAddedBase] = useState<number>(0);
+    const [score, setScore] = useState<number>(0);
+    const [phHistory, setPhHistory] = useState<{time: number, ph: number, added: string}[]>([]);
+    const [showCalculations, setShowCalculations] = useState<boolean>(false);
+    const [currentStep, setCurrentStep] = useState<number>(1);
+
+    const bufferSystems = [
+      {
+        id: 'acetate',
+        name: { zh: '醋酸/醋酸钠缓冲液', en: 'Acetate Buffer (CH₃COOH/CH₃COO⁻)' },
+        weakAcid: 'CH₃COOH',
+        conjugateBase: 'CH₃COO⁻',
+        pKa: 4.74,
+        effectiveRange: [3.74, 5.74],
+        description: { zh: '最常用的缓冲系统，pKa = 4.74', en: 'Most common buffer system, pKa = 4.74' }
+      },
+      {
+        id: 'phosphate',
+        name: { zh: '磷酸氢盐缓冲液', en: 'Phosphate Buffer (H₂PO₄⁻/HPO₄²⁻)' },
+        weakAcid: 'H₂PO₄⁻',
+        conjugateBase: 'HPO₄²⁻',
+        pKa: 7.21,
+        effectiveRange: [6.21, 8.21],
+        description: { zh: '生理pH缓冲系统，pKa = 7.21', en: 'Physiological pH buffer system, pKa = 7.21' }
+      },
+      {
+        id: 'carbonate',
+        name: { zh: '碳酸氢盐缓冲液', en: 'Carbonate Buffer (H₂CO₃/HCO₃⁻)' },
+        weakAcid: 'H₂CO₃',
+        conjugateBase: 'HCO₃⁻',
+        pKa: 6.35,
+        effectiveRange: [5.35, 7.35],
+        description: { zh: '血液缓冲系统，pKa = 6.35', en: 'Blood buffer system, pKa = 6.35' }
+      },
+      {
+        id: 'tris',
+        name: { zh: 'Tris缓冲液', en: 'Tris Buffer (Tris-H⁺/Tris)' },
+        weakAcid: 'Tris-H⁺',
+        conjugateBase: 'Tris',
+        pKa: 8.07,
+        effectiveRange: [7.07, 9.07],
+        description: { zh: '生化实验常用，pKa = 8.07', en: 'Common in biochemistry, pKa = 8.07' }
+      }
+    ];
+
+    const reagents = [
+      { id: 'hcl', name: '0.1M HCl', type: 'strong-acid', strength: 0.1 },
+      { id: 'naoh', name: '0.1M NaOH', type: 'strong-base', strength: 0.1 },
+      { id: 'hcl-dilute', name: '0.01M HCl', type: 'strong-acid', strength: 0.01 },
+      { id: 'naoh-dilute', name: '0.01M NaOH', type: 'strong-base', strength: 0.01 }
+    ];
+
+    const selectedBufferData = bufferSystems.find(b => b.id === selectedBuffer);
+
+    const calculateBufferPH = (acidConc: number, baseConc: number, pKa: number): number => {
+      if (baseConc <= 0) return 0;
+      if (acidConc <= 0) return 14;
+      // Henderson-Hasselbalch equation: pH = pKa + log([A⁻]/[HA])
+      return pKa + Math.log10(baseConc / acidConc);
+    };
+
+    const handleBufferSelection = (bufferId: string): void => {
+      setSelectedBuffer(bufferId);
+      const buffer = bufferSystems.find(b => b.id === bufferId);
+      if (buffer) {
+        setTargetPH(buffer.pKa); // Start with pKa as target
+        setCurrentPH(calculateBufferPH(0.1, 0.1, buffer.pKa));
+      }
+    };
+
+    const proceedToBufferSetup = (): void => {
+      if (selectedBuffer) {
+        setGamePhase('buffer-setup');
+        setCurrentStep(2);
+      }
+    };
+
+    const handleConcentrationChange = (component: 'acid' | 'base', value: number): void => {
+      const newConc = { ...bufferConcentration, [component]: value };
+      setBufferConcentration(newConc);
+      
+      if (selectedBufferData) {
+        const newPH = calculateBufferPH(newConc.acid, newConc.base, selectedBufferData.pKa);
+        setCurrentPH(newPH);
+      }
+    };
+
+    const proceedToTesting = (): void => {
+      setGamePhase('testing');
+      setCurrentStep(3);
+      setPhHistory([{time: 0, ph: currentPH, added: 'Initial buffer'}]);
+    };
+
+    const addReagent = (reagentId: string, volume: number): void => {
+      const reagent = reagents.find(r => r.id === reagentId);
+      if (!reagent || !selectedBufferData) return;
+
+      const totalVolume = 100; // Assume 100mL initial buffer solution
+      const moles = reagent.strength * (volume / 1000); // Convert mL to L
+
+      let newAcidConc = bufferConcentration.acid;
+      let newBaseConc = bufferConcentration.base;
+
+      if (reagent.type === 'strong-acid') {
+        // Strong acid converts conjugate base to weak acid
+        newBaseConc = Math.max(0, newBaseConc - moles / (totalVolume / 1000));
+        newAcidConc = newAcidConc + moles / (totalVolume / 1000);
+        setAddedAcid(prev => prev + volume);
+      } else if (reagent.type === 'strong-base') {
+        // Strong base converts weak acid to conjugate base
+        newAcidConc = Math.max(0, newAcidConc - moles / (totalVolume / 1000));
+        newBaseConc = newBaseConc + moles / (totalVolume / 1000);
+        setAddedBase(prev => prev + volume);
+      }
+
+      setBufferConcentration({acid: newAcidConc, base: newBaseConc});
+      const newPH = calculateBufferPH(newAcidConc, newBaseConc, selectedBufferData.pKa);
+      setCurrentPH(newPH);
+
+      // Add to history
+      setPhHistory(prev => [...prev, {
+        time: prev.length,
+        ph: newPH,
+        added: `${volume}mL ${reagent.name}`
+      }]);
+
+      // Check if target reached
+      if (Math.abs(newPH - targetPH) < 0.05) {
+        setScore(prev => prev + 150);
+        setGamePhase('calculation');
+        setCurrentStep(4);
+      }
+    };
+
+    const setNewTarget = (): void => {
+      if (selectedBufferData) {
+        const minPH = selectedBufferData.effectiveRange[0];
+        const maxPH = selectedBufferData.effectiveRange[1];
+        const newTarget = minPH + Math.random() * (maxPH - minPH);
+        setTargetPH(Number(newTarget.toFixed(2)));
+      }
+    };
+
+    const resetExperiment = (): void => {
+      setGamePhase('preparation');
+      setSelectedBuffer('');
+      setBufferConcentration({acid: 0.1, base: 0.1});
+      setCurrentPH(7.0);
+      setAddedAcid(0);
+      setAddedBase(0);
+      setPhHistory([]);
+      setCurrentStep(1);
+    };
+
+    const getPHColor = (ph: number): string => {
+      if (ph <= 2) return '#FF0000';
+      if (ph <= 4) return '#FF6600';
+      if (ph <= 6) return '#FFCC00';
+      if (ph <= 8) return '#66FF66';
+      if (ph <= 10) return '#0066FF';
+      if (ph <= 12) return '#0000FF';
+      return '#9900FF';
+    };
+
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-green-900 via-teal-900 to-blue-800 p-6">
+        <div className="max-w-7xl mx-auto">
+          {/* Progress Header */}
+          <div className="bg-white/10 backdrop-blur-md rounded-xl p-4 mb-6">
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-2xl font-bold text-white">
+                {currentLang === 'zh' ? 'pH平衡器 - 缓冲溶液实验室' : 'pH Balancer - Buffer Solution Lab'}
+              </h2>
+              <div className="flex items-center gap-4">
+                <button
+                  onClick={() => setShowCalculations(!showCalculations)}
+                  className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors"
+                >
+                  <Calculator className="w-4 h-4 inline mr-2" />
+                  {currentLang === 'zh' ? '计算公式' : 'Calculations'}
+                </button>
+                <div className="text-white font-semibold">
+                  {currentLang === 'zh' ? '得分' : 'Score'}: {score}
+                </div>
+              </div>
+            </div>
+            
+            {/* Progress Steps */}
+            <div className="flex items-center gap-4">
+              {[1, 2, 3, 4].map(step => (
+                <div key={step} className={`flex items-center ${step < 4 ? 'flex-1' : ''}`}>
+                  <div className={`w-8 h-8 rounded-full flex items-center justify-center font-bold ${
+                    currentStep >= step ? 'bg-green-500 text-white' : 'bg-gray-600 text-gray-300'
+                  }`}>
+                    {step}
+                  </div>
+                  {step < 4 && (
+                    <div className={`flex-1 h-2 mx-2 rounded ${
+                      currentStep > step ? 'bg-green-500' : 'bg-gray-600'
+                    }`} />
+                  )}
+                </div>
+              ))}
+            </div>
+            
+            <div className="mt-2 text-sm text-gray-300">
+              {currentStep === 1 && (currentLang === 'zh' ? '选择缓冲系统' : 'Select Buffer System')}
+              {currentStep === 2 && (currentLang === 'zh' ? '配制缓冲溶液' : 'Prepare Buffer Solution')}
+              {currentStep === 3 && (currentLang === 'zh' ? '调节pH值' : 'Adjust pH Value')}
+              {currentStep === 4 && (currentLang === 'zh' ? '计算分析' : 'Calculate & Analyze')}
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
+            {/* Main Experiment Area */}
+            <div className="xl:col-span-2">
+              {gamePhase === 'preparation' && (
+                <div className="bg-white/10 backdrop-blur-md rounded-xl p-6">
+                  <h3 className="text-xl font-bold text-white mb-4">
+                    {currentLang === 'zh' ? '步骤1：选择缓冲系统' : 'Step 1: Select Buffer System'}
+                  </h3>
+                  
+                  <div className="space-y-4">
+                    {bufferSystems.map(buffer => (
+                      <button
+                        key={buffer.id}
+                        onClick={() => handleBufferSelection(buffer.id)}
+                        className={`w-full p-6 rounded-lg border-2 text-left transition-colors ${
+                          selectedBuffer === buffer.id
+                            ? 'border-green-400 bg-green-500/20'
+                            : 'border-white/30 bg-white/10 hover:border-white/50'
+                        }`}
+                      >
+                        <div className="flex justify-between items-start mb-3">
+                          <div>
+                            <h4 className="text-white font-bold text-lg">{getText(buffer.name)}</h4>
+                            <p className="text-gray-300 text-sm">{getText(buffer.description)}</p>
+                          </div>
+                          <div className="text-right">
+                            <div className="text-cyan-300 font-bold">pKa = {buffer.pKa}</div>
+                            <div className="text-cyan-400 text-sm">
+                              pH范围: {buffer.effectiveRange[0]} - {buffer.effectiveRange[1]}
+                            </div>
+                          </div>
+                        </div>
+                        
+                        <div className="grid grid-cols-2 gap-4 text-sm">
+                          <div className="bg-red-500/20 border border-red-400/30 rounded p-2">
+                            <span className="text-red-300 font-semibold">
+                              {currentLang === 'zh' ? '弱酸' : 'Weak Acid'}: 
+                            </span>
+                            <span className="text-white ml-1">{buffer.weakAcid}</span>
+                          </div>
+                          <div className="bg-blue-500/20 border border-blue-400/30 rounded p-2">
+                            <span className="text-blue-300 font-semibold">
+                              {currentLang === 'zh' ? '共轭碱' : 'Conjugate Base'}: 
+                            </span>
+                            <span className="text-white ml-1">{buffer.conjugateBase}</span>
+                          </div>
+                        </div>
+                      </button>
+                    ))}
+                  </div>
+
+                  <button
+                    onClick={proceedToBufferSetup}
+                    disabled={!selectedBuffer}
+                    className="mt-6 w-full py-3 bg-green-600 hover:bg-green-700 disabled:bg-gray-600 
+                             text-white rounded-lg font-semibold transition-colors"
+                  >
+                    {currentLang === 'zh' ? '进入配制步骤' : 'Proceed to Buffer Preparation'}
+                  </button>
+                </div>
+              )}
+
+              {gamePhase === 'buffer-setup' && selectedBufferData && (
+                <div className="bg-white/10 backdrop-blur-md rounded-xl p-6">
+                  <h3 className="text-xl font-bold text-white mb-4">
+                    {currentLang === 'zh' ? '步骤2：配制缓冲溶液' : 'Step 2: Prepare Buffer Solution'}
+                  </h3>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    {/* Concentration Controls */}
+                    <div>
+                      <h4 className="text-white font-semibold mb-4">
+                        {currentLang === 'zh' ? '调节浓度 (mol/L)' : 'Adjust Concentrations (mol/L)'}
+                      </h4>
+                      
+                      <div className="space-y-4">
+                        <div>
+                          <label className="block text-red-300 font-semibold mb-2">
+                            [{selectedBufferData.weakAcid}] = {bufferConcentration.acid.toFixed(3)} M
+                          </label>
+                          <input
+                            type="range"
+                            min="0.01"
+                            max="0.5"
+                            step="0.01"
+                            value={bufferConcentration.acid}
+                            onChange={(e) => handleConcentrationChange('acid', Number(e.target.value))}
+                            className="w-full"
+                          />
+                        </div>
+
+                        <div>
+                          <label className="block text-blue-300 font-semibold mb-2">
+                            [{selectedBufferData.conjugateBase}] = {bufferConcentration.base.toFixed(3)} M
+                          </label>
+                          <input
+                            type="range"
+                            min="0.01"
+                            max="0.5"
+                            step="0.01"
+                            value={bufferConcentration.base}
+                            onChange={(e) => handleConcentrationChange('base', Number(e.target.value))}
+                            className="w-full"
+                          />
+                        </div>
+                      </div>
+
+                      <div className="mt-4 p-4 bg-yellow-500/20 border border-yellow-400/30 rounded">
+                        <h5 className="text-yellow-300 font-semibold mb-2">
+                          {currentLang === 'zh' ? '目标pH' : 'Target pH'}
+                        </h5>
+                        <div className="text-yellow-200 text-2xl font-bold">{targetPH}</div>
+                        <button
+                          onClick={setNewTarget}
+                          className="mt-2 px-3 py-1 bg-yellow-600 hover:bg-yellow-700 text-white rounded text-sm"
+                        >
+                          {currentLang === 'zh' ? '新目标' : 'New Target'}
+                        </button>
+                      </div>
+                    </div>
+
+                    {/* pH Visualization */}
+                    <div className="text-center">
+                      <h4 className="text-white font-semibold mb-4">
+                        {currentLang === 'zh' ? '当前pH值' : 'Current pH'}
+                      </h4>
+                      
+                      <div className="relative w-48 h-48 mx-auto">
+                        <div 
+                          className="w-full h-full rounded-full border-8 border-white flex items-center justify-center text-white font-bold text-3xl shadow-lg"
+                          style={{ backgroundColor: getPHColor(currentPH) }}
+                        >
+                          {currentPH.toFixed(2)}
+                        </div>
+                        
+                        {/* pH Scale */}
+                        <div className="absolute -bottom-8 left-0 right-0">
+                          <div className="flex justify-between text-xs text-gray-300">
+                            <span>0</span>
+                            <span>7</span>
+                            <span>14</span>
+                          </div>
+                          <div className="w-full h-2 bg-gradient-to-r from-red-500 via-green-500 to-purple-500 rounded mt-1"></div>
+                        </div>
+                      </div>
+
+                      {/* Henderson-Hasselbalch Preview */}
+                      <div className="mt-6 p-3 bg-black/20 rounded font-mono text-sm">
+                        <div className="text-green-300">pH = pKa + log([A⁻]/[HA])</div>
+                        <div className="text-white">
+                          pH = {selectedBufferData.pKa} + log({bufferConcentration.base.toFixed(3)}/{bufferConcentration.acid.toFixed(3)})
+                        </div>
+                        <div className="text-cyan-300">pH = {currentPH.toFixed(2)}</div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <button
+                    onClick={proceedToTesting}
+                    className="mt-6 w-full py-3 bg-green-600 hover:bg-green-700 text-white rounded-lg font-semibold transition-colors"
+                  >
+                    {currentLang === 'zh' ? '开始pH调节' : 'Start pH Adjustment'}
+                  </button>
+                </div>
+              )}
+
+              {gamePhase === 'testing' && (
+                <div className="bg-white/10 backdrop-blur-md rounded-xl p-6">
+                  <h3 className="text-xl font-bold text-white mb-4">
+                    {currentLang === 'zh' ? '步骤3：精确调节pH值' : 'Step 3: Fine-tune pH Value'}
+                  </h3>
+
+                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    {/* Reagent Addition */}
+                    <div>
+                      <h4 className="text-white font-semibold mb-4">
+                        {currentLang === 'zh' ? '添加试剂' : 'Add Reagents'}
+                      </h4>
+                      
+                      <div className="space-y-4">
+                        {reagents.map(reagent => (
+                          <div key={reagent.id} className="bg-black/20 rounded-lg p-4">
+                            <div className="flex items-center justify-between mb-3">
+                              <span className="text-white font-semibold">{reagent.name}</span>
+                              <span className={`text-sm px-2 py-1 rounded ${
+                                reagent.type === 'strong-acid' ? 'bg-red-500/20 text-red-300' : 'bg-blue-500/20 text-blue-300'
+                              }`}>
+                                {reagent.type === 'strong-acid' ? 
+                                  (currentLang === 'zh' ? '强酸' : 'Strong Acid') : 
+                                  (currentLang === 'zh' ? '强碱' : 'Strong Base')
+                                }
+                              </span>
+                            </div>
+                            
+                            <div className="flex gap-2">
+                              {[0.1, 0.5, 1.0, 2.0].map(volume => (
+                                <button
+                                  key={volume}
+                                  onClick={() => addReagent(reagent.id, volume)}
+                                  className={`flex-1 py-2 px-3 rounded text-white transition-colors ${
+                                    reagent.type === 'strong-acid' 
+                                      ? 'bg-red-600 hover:bg-red-700' 
+                                      : 'bg-blue-600 hover:bg-blue-700'
+                                  }`}
+                                >
+                                  +{volume}mL
+                                </button>
+                              ))}
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+
+                      <div className="mt-4 grid grid-cols-2 gap-4 text-sm">
+                        <div className="bg-red-500/20 border border-red-400/30 rounded p-3 text-center">
+                          <div className="text-red-300 font-semibold">
+                            {currentLang === 'zh' ? '已加酸' : 'Acid Added'}
+                          </div>
+                          <div className="text-white text-lg">{addedAcid.toFixed(1)} mL</div>
+                        </div>
+                        <div className="bg-blue-500/20 border border-blue-400/30 rounded p-3 text-center">
+                          <div className="text-blue-300 font-semibold">
+                            {currentLang === 'zh' ? '已加碱' : 'Base Added'}
+                          </div>
+                          <div className="text-white text-lg">{addedBase.toFixed(1)} mL</div>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Real-time Monitoring */}
+                    <div>
+                      <h4 className="text-white font-semibold mb-4">
+                        {currentLang === 'zh' ? '实时监控' : 'Real-time Monitoring'}
+                      </h4>
+                      
+                      <div className="text-center mb-6">
+                        <div 
+                          className="w-32 h-32 mx-auto rounded-full border-4 border-white flex items-center justify-center text-white font-bold text-2xl"
+                          style={{ backgroundColor: getPHColor(currentPH) }}
+                        >
+                          {currentPH.toFixed(2)}
+                        </div>
+                        <div className="mt-2 text-gray-300">
+                          {currentLang === 'zh' ? '当前pH' : 'Current pH'}
+                        </div>
+                      </div>
+
+                      <div className="bg-yellow-500/20 border border-yellow-400/30 rounded p-3 text-center mb-4">
+                        <div className="text-yellow-300 font-semibold">
+                          {currentLang === 'zh' ? '目标pH' : 'Target pH'}
+                        </div>
+                        <div className="text-yellow-200 text-xl">{targetPH}</div>
+                        <div className="text-yellow-400 text-sm">
+                          {currentLang === 'zh' ? '差值' : 'Difference'}: {Math.abs(currentPH - targetPH).toFixed(2)}
+                        </div>
+                      </div>
+
+                      {/* pH History Chart */}
+                      <div className="bg-black/20 rounded p-3">
+                        <h5 className="text-white font-semibold mb-2">
+                          {currentLang === 'zh' ? 'pH变化历史' : 'pH Change History'}
+                        </h5>
+                        <div className="max-h-32 overflow-y-auto space-y-1 text-xs">
+                          {phHistory.map((entry, index) => (
+                            <div key={index} className="flex justify-between text-gray-300">
+                              <span>{entry.added}</span>
+                              <span className="font-mono" style={{ color: getPHColor(entry.ph) }}>
+                                pH {entry.ph.toFixed(2)}
+                              </span>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {gamePhase === 'calculation' && selectedBufferData && (
+                <div className="bg-white/10 backdrop-blur-md rounded-xl p-6">
+                  <h3 className="text-xl font-bold text-white mb-4">
+                    {currentLang === 'zh' ? '步骤4：计算分析' : 'Step 4: Calculation & Analysis'}
+                  </h3>
+
+                  <div className="space-y-6">
+                    {/* Success Message */}
+                    <div className="bg-green-500/20 border border-green-400 rounded-lg p-4 text-center">
+                      <CheckCircle className="w-8 h-8 text-green-400 mx-auto mb-2" />
+                      <div className="text-green-200 font-semibold">
+                        {currentLang === 'zh' ? '成功达到目标pH！' : 'Successfully reached target pH!'}
+                      </div>
+                      <div className="text-green-300 text-sm">
+                        {currentLang === 'zh' ? '最终pH' : 'Final pH'}: {currentPH.toFixed(2)} 
+                        {currentLang === 'zh' ? '（目标：' : ' (Target: '}{targetPH}{currentLang === 'zh' ? '）' : ')'}
+                      </div>
+                    </div>
+
+                    {/* Detailed Calculations */}
+                    <div className="bg-black/20 rounded-lg p-4">
+                      <h4 className="text-cyan-300 font-semibold mb-3">
+                        {currentLang === 'zh' ? 'Henderson-Hasselbalch方程计算' : 'Henderson-Hasselbalch Equation Calculation'}
+                      </h4>
+                      <div className="font-mono text-white space-y-2">
+                        <div>pH = pKa + log([A⁻]/[HA])</div>
+                        <div>pH = {selectedBufferData.pKa} + log({bufferConcentration.base.toFixed(3)}/{bufferConcentration.acid.toFixed(3)})</div>
+                        <div>pH = {selectedBufferData.pKa} + log({(bufferConcentration.base/bufferConcentration.acid).toFixed(3)})</div>
+                        <div>pH = {selectedBufferData.pKa} + {Math.log10(bufferConcentration.base/bufferConcentration.acid).toFixed(3)}</div>
+                        <div className="text-cyan-300 font-bold">pH = {currentPH.toFixed(2)}</div>
+                      </div>
+                    </div>
+
+                    {/* Buffer Capacity Analysis */}
+                    <div className="bg-purple-500/20 border border-purple-400/30 rounded-lg p-4">
+                      <h4 className="text-purple-300 font-semibold mb-3">
+                        {currentLang === 'zh' ? '缓冲容量分析' : 'Buffer Capacity Analysis'}
+                      </h4>
+                      <div className="text-purple-200 text-sm space-y-2">
+                        <div>
+                          {currentLang === 'zh' ? '添加的强酸：' : 'Strong acid added: '}{addedAcid.toFixed(1)} mL
+                        </div>
+                        <div>
+                          {currentLang === 'zh' ? '添加的强碱：' : 'Strong base added: '}{addedBase.toFixed(1)} mL
+                        </div>
+                        <div>
+                          {currentLang === 'zh' ? 'pH变化幅度：' : 'pH change range: '}
+                          {phHistory.length > 1 ? 
+                            `${Math.min(...phHistory.map(h => h.ph)).toFixed(2)} - ${Math.max(...phHistory.map(h => h.ph)).toFixed(2)}` :
+                            'N/A'
+                          }
+                        </div>
+                        <div className="text-purple-300 font-semibold">
+                          {currentLang === 'zh' ? '缓冲效果：优秀' : 'Buffer Performance: Excellent'}
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="flex gap-4">
+                      <button
+                        onClick={resetExperiment}
+                        className="flex-1 py-3 bg-gray-600 hover:bg-gray-700 text-white rounded-lg font-semibold transition-colors"
+                      >
+                        {currentLang === 'zh' ? '重新实验' : 'New Experiment'}
+                      </button>
+                      <button
+                        onClick={() => setGamePhase('testing')}
+                        className="flex-1 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-semibold transition-colors"
+                      >
+                        {currentLang === 'zh' ? '继续调节' : 'Continue Adjusting'}
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* Side Panel */}
+            <div className="space-y-6">
+              {/* Calculations Panel */}
+              {showCalculations && (
+                <div className="bg-white/10 backdrop-blur-md rounded-xl p-4">
+                  <h4 className="text-white font-semibold mb-3">
+                    {currentLang === 'zh' ? '缓冲溶液理论' : 'Buffer Solution Theory'}
+                  </h4>
+                  
+                  <div className="space-y-4 text-sm">
+                    <div className="bg-blue-500/20 border border-blue-400/30 rounded p-3">
+                      <h5 className="text-blue-300 font-semibold mb-2">Henderson-Hasselbalch方程</h5>
+                      <div className="font-mono text-blue-200">
+                        pH = pKa + log([A⁻]/[HA])
+                      </div>
+                    </div>
+
+                    <div className="bg-green-500/20 border border-green-400/30 rounded p-3">
+                      <h5 className="text-green-300 font-semibold mb-2">
+                        {currentLang === 'zh' ? '缓冲范围' : 'Buffer Range'}
+                      </h5>
+                      <div className="text-green-200">
+                        pH = pKa ± 1
+                      </div>
+                    </div>
+
+                    <div className="bg-yellow-500/20 border border-yellow-400/30 rounded p-3">
+                      <h5 className="text-yellow-300 font-semibold mb-2">
+                        {currentLang === 'zh' ? '最佳缓冲比' : 'Optimal Buffer Ratio'}
+                      </h5>
+                      <div className="text-yellow-200">
+                        [A⁻]/[HA] = 0.1 - 10
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* Buffer Information */}
+              {selectedBufferData && (
+                <div className="bg-white/10 backdrop-blur-md rounded-xl p-4">
+                  <h4 className="text-white font-semibold mb-3">
+                    {currentLang === 'zh' ? '缓冲系统信息' : 'Buffer System Info'}
+                  </h4>
+                  
+                  <div className="space-y-3 text-sm">
+                    <div>
+                      <span className="text-gray-300">
+                        {currentLang === 'zh' ? '系统名称：' : 'System: '}
+                      </span>
+                      <span className="text-white">{getText(selectedBufferData.name)}</span>
+                    </div>
+                    
+                    <div>
+                      <span className="text-gray-300">pKa: </span>
+                      <span className="text-cyan-300 font-bold">{selectedBufferData.pKa}</span>
+                    </div>
+                    
+                    <div>
+                      <span className="text-gray-300">
+                        {currentLang === 'zh' ? '有效范围：' : 'Effective Range: '}
+                      </span>
+                      <span className="text-green-300">
+                        {selectedBufferData.effectiveRange[0]} - {selectedBufferData.effectiveRange[1]}
+                      </span>
+                    </div>
+
+                    <div className="pt-2 border-t border-white/20">
+                      <div className="text-red-300">
+                        {currentLang === 'zh' ? '弱酸：' : 'Weak Acid: '}{selectedBufferData.weakAcid}
+                      </div>
+                      <div className="text-blue-300">
+                        {currentLang === 'zh' ? '共轭碱：' : 'Conjugate Base: '}{selectedBufferData.conjugateBase}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* Quick Tips */}
+              <div className="bg-white/10 backdrop-blur-md rounded-xl p-4">
+                <h4 className="text-white font-semibold mb-3">
+                  {currentLang === 'zh' ? '实验技巧' : 'Experimental Tips'}
+                </h4>
+                
+                <div className="space-y-2 text-sm text-gray-300">
+                  <div className="flex items-start gap-2">
+                    <span className="text-yellow-400">•</span>
+                    <span>{currentLang === 'zh' ? '选择pKa接近目标pH的缓冲系统' : 'Choose buffer system with pKa close to target pH'}</span>
+                  </div>
+                  <div className="flex items-start gap-2">
+                    <span className="text-yellow-400">•</span>
+                    <span>{currentLang === 'zh' ? '少量多次添加试剂以精确控制' : 'Add reagents in small increments for precise control'}</span>
+                  </div>
+                  <div className="flex items-start gap-2">
+                    <span className="text-yellow-400">•</span>
+                    <span>{currentLang === 'zh' ? '观察缓冲容量的抗酸碱能力' : 'Observe buffer capacity against acids and bases'}</span>
+                  </div>
+                  <div className="flex items-start gap-2">
+                    <span className="text-yellow-400">•</span>
+                    <span>{currentLang === 'zh' ? '使用Henderson-Hasselbalch方程验证结果' : 'Use Henderson-Hasselbalch equation to verify results'}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  };
 
   // Main component render
   if (currentGame) {
@@ -996,6 +1680,7 @@ const ChemistryGameSuite: React.FC = () => {
         {/* Render Current Game */}
         {currentGame === 'electrochemical' && <ElectrochemicalGame />}
         {currentGame === 'ligand-swap' && <LigandSwapGame />}
+        {currentGame === 'ph-balancer' && <PHBalancerGame />}
         {/* Add other games here */}
       </div>
     );
