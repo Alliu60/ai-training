@@ -51,7 +51,7 @@ export default function RootLayout({
                     "botDescription": "I can help you resolve issues and guide you in using AI-powered content creation and design tools. Ask me anything about features, troubleshooting, or getting the most out of your AI tools experience.",
                     "website": {
                       "title": "Website",
-                      "link": "https://ai-shared.netlify.app/"
+                      "link": "https://shared-update.netlify.app/"
                     },
                     "email": {},
                     "phone": {},
